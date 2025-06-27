@@ -25,14 +25,7 @@ import { SUPPORTED_LANGUAGES } from '@/constants/language';
 import { CodeEditor } from './_components/code-editor';
 import { OutputViewer } from './_components/output-viewer';
 import { executeCodeAction } from './_actions/execute';
-import { Language } from '@/@types';
-
-interface ExecutionResult {
-  status: 'success' | 'error' | 'running';
-  output: string;
-  executionTime: number;
-  language: string;
-}
+import { ExecutionResult, Language } from '@/@types';
 
 export default function ExecuteMePlatform() {
   const [selectedLanguage, setSelectedLanguage] = useState<Language>('python');
@@ -41,28 +34,6 @@ export default function ExecuteMePlatform() {
   const [executionResult, setExecutionResult] =
     useState<ExecutionResult | null>(null);
   const [isExecuting, setIsExecuting] = useState(false);
-
-  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      setUploadedFile(file);
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const content = e.target?.result as string;
-        setCode(content);
-      };
-      reader.readAsText(file);
-
-      // Auto-detect language from file extension
-      const extension = file.name.split('.').pop();
-      const detectedLanguage = SUPPORTED_LANGUAGES.find(
-        (lang) => lang.extension === `.${extension}`
-      );
-      if (detectedLanguage) {
-        setSelectedLanguage(detectedLanguage.value as Language);
-      }
-    }
-  };
 
   const executeCode = async () => {
     if (!code.trim()) {
@@ -99,26 +70,6 @@ export default function ExecuteMePlatform() {
     }
   };
 
-  const copyOutput = () => {
-    if (executionResult?.output) {
-      navigator.clipboard.writeText(executionResult.output);
-    }
-  };
-
-  const downloadOutput = () => {
-    if (executionResult?.output) {
-      const blob = new Blob([executionResult.output], { type: 'text/plain' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `output_${Date.now()}.txt`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-    }
-  };
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-4">
       <div className="max-w-7xl mx-auto">
@@ -143,21 +94,18 @@ export default function ExecuteMePlatform() {
         <div className="grid lg:grid-cols-2 gap-6">
           {/* Code Input Section */}
           <Card className="h-fit">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Code2 className="w-5 h-5" />
-                Code Editor
-              </CardTitle>
-              <CardDescription>
-                Write or upload your code with full syntax highlighting
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
+            <CardHeader className="flex justify-between">
+              <div>
+                <CardTitle className="flex items-center gap-2">
+                  <Code2 className="w-5 h-5" />
+                  Code Editor
+                </CardTitle>
+                <CardDescription>
+                  Write or upload your code with full syntax highlighting
+                </CardDescription>
+              </div>
               {/* Language Selection */}
               <div className="space-y-2">
-                <label className="text-sm font-medium">
-                  Programming Language
-                </label>
                 <Select
                   value={selectedLanguage}
                   onValueChange={(e) => setSelectedLanguage(e as Language)}
@@ -174,71 +122,14 @@ export default function ExecuteMePlatform() {
                   </SelectContent>
                 </Select>
               </div>
-
-              <Tabs defaultValue="editor" className="w-full">
-                <TabsList className="grid w-full grid-cols-2">
-                  <TabsTrigger value="editor">Code Editor</TabsTrigger>
-                  <TabsTrigger value="upload">Upload File</TabsTrigger>
-                </TabsList>
-
-                <TabsContent value="editor" className="space-y-4">
-                  <CodeEditor
-                    value={code}
-                    onChange={setCode}
-                    language={selectedLanguage}
-                    height="500px"
-                  />
-                </TabsContent>
-
-                <TabsContent value="upload" className="space-y-4">
-                  <div className="border-2 border-dashed border-slate-300 rounded-lg p-8 text-center hover:border-slate-400 transition-colors">
-                    <Upload className="w-12 h-12 text-slate-400 mx-auto mb-4" />
-                    <div className="space-y-2">
-                      <p className="text-sm text-slate-600">
-                        Drop your code file here or click to browse
-                      </p>
-                      <input
-                        type="file"
-                        onChange={handleFileUpload}
-                        accept={SUPPORTED_LANGUAGES.map(
-                          (l) => l.extension
-                        ).join(',')}
-                        className="hidden"
-                        id="file-upload"
-                      />
-                      <Button
-                        variant="outline"
-                        onClick={() =>
-                          document.getElementById('file-upload')?.click()
-                        }
-                      >
-                        Choose File
-                      </Button>
-                    </div>
-                  </div>
-
-                  {uploadedFile && (
-                    <div className="flex items-center gap-2 p-3 bg-slate-50 rounded-lg">
-                      <FileText className="w-4 h-4 text-slate-500" />
-                      <span className="text-sm font-medium">
-                        {uploadedFile.name}
-                      </span>
-                      <Badge variant="secondary" className="text-xs">
-                        {(uploadedFile.size / 1024).toFixed(1)} KB
-                      </Badge>
-                    </div>
-                  )}
-
-                  {code && (
-                    <CodeEditor
-                      value={code}
-                      onChange={setCode}
-                      language={selectedLanguage}
-                      height="400px"
-                    />
-                  )}
-                </TabsContent>
-              </Tabs>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <CodeEditor
+                value={code}
+                onChange={setCode}
+                language={selectedLanguage}
+                height="300px"
+              />
 
               <Button
                 onClick={executeCode}

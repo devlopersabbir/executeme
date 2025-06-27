@@ -6,11 +6,12 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Loader2 } from 'lucide-react';
 import { LANGUAGE_MAP, SAMPLE_CODE } from '@/constants';
+import { Language } from '@/@types';
 
 interface CodeEditorProps {
   value: string;
   onChange: (value: string) => void;
-  language: string;
+  language: Language;
   height?: string;
   readOnly?: boolean;
 }
@@ -19,7 +20,7 @@ export function CodeEditor({
   value,
   onChange,
   language,
-  height = '400px',
+  height = '300px',
   readOnly = false,
 }: CodeEditorProps) {
   const { theme } = useTheme();
@@ -30,10 +31,10 @@ export function CodeEditor({
 
   const editorOptions = {
     minimap: { enabled: false },
-    fontSize: 14,
+    fontSize: 16,
     lineNumbers: 'on' as const,
     roundedSelection: false,
-    scrollBeyondLastLine: false,
+    scrollBeyondLastLine: true,
     automaticLayout: true,
     tabSize: 2,
     insertSpaces: true,
@@ -67,8 +68,8 @@ export function CodeEditor({
               <div className="w-3 h-3 rounded-full bg-green-400"></div>
             </div>
             <span className="text-sm font-medium text-slate-600">
-              {language}.
-              {LANGUAGE_MAP[language] === 'cpp'
+              {language}
+              {/* {LANGUAGE_MAP[language] === 'cpp'
                 ? 'cpp'
                 : LANGUAGE_MAP[language] === 'python'
                 ? 'py'
@@ -76,7 +77,7 @@ export function CodeEditor({
                 ? 'js'
                 : LANGUAGE_MAP[language] === 'typescript'
                 ? 'ts'
-                : LANGUAGE_MAP[language]}
+                : LANGUAGE_MAP[language]} */}
             </span>
           </div>
           <Badge variant="secondary" className="text-xs">
@@ -88,7 +89,9 @@ export function CodeEditor({
           <Editor
             height={height}
             language={LANGUAGE_MAP[language] || 'plaintext'}
-            value={value || SAMPLE_CODE[language] || '// Start coding here...'}
+            value={value ?? '// Start coding here...'}
+            defaultLanguage={LANGUAGE_MAP[language]}
+            saveViewState={false}
             onChange={handleEditorChange}
             theme={theme === 'dark' ? 'vs-dark' : 'vs'}
             options={editorOptions}
