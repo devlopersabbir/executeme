@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Infographic: The Anatomy of Executeme</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <style>
+      body {
+        font-family: 'Inter', sans-serif;
+        background-color: #111827;
+        color: #e5e7eb;
+      }
+      .chart-container {
+        position: relative;
+        margin-left: auto;
+        margin-right: auto;
+        height: 350px;
+        max-height: 400px;
+        width: 100%;
+        max-width: 600px;
+      }
+      @media (min-width: 768px) {
+        .chart-container {
+          height: 400px;
+        }
+      }
+      .gradient-text {
+        background: linear-gradient(90deg, #ff4e50, #fc913a);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      .kpi-card {
+        background-color: #1f2937;
+        border: 1px solid #374151;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+      .kpi-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 15px -3px rgba(255, 78, 80, 0.2),
+          0 4px 6px -2px rgba(252, 145, 58, 0.1);
+      }
+      .flow-step-new {
+        background-color: #1f2937;
+        border: 1px solid #374151;
+        min-height: 140px; /* Slightly taller for icons/numbers */
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 1.5rem;
+        flex: 1 1 auto;
+        position: relative; /* For connector positioning if needed */
+        transition: transform 0.3s ease, background-color 0.3s ease,
+          box-shadow 0.3s ease;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        border-radius: 0.75rem; /* rounded-xl */
+      }
+      .flow-step-new:hover {
+        transform: translateY(-8px) scale(1.02);
+        background-color: #2f3b4e; /* Slightly lighter background on hover */
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+        border-color: #ff4e50; /* Highlight border */
+      }
+      .flow-step-number {
+        font-size: 2.5rem; /* Larger number */
+        font-weight: 900; /* Extra bold */
+        margin-bottom: 0.5rem;
+        line-height: 1;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-image: linear-gradient(45deg, #fc913a, #ff4e50);
+      }
+      .flow-step-icon {
+        font-size: 2.5rem; /* Large icon */
+        color: #f9d423; /* Yellow accent color */
+        margin-bottom: 0.75rem;
+      }
+      .flow-arrow-connector {
+        color: #ff4e50;
+        font-size: 3rem; /* Larger arrows */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0.5rem 0; /* Vertical margin for mobile */
+      }
+      @media (min-width: 768px) {
+        .flow-arrow-connector {
+          margin: 0 1rem; /* Horizontal margin for desktop */
+          font-size: 3.5rem;
+        }
+      }
+
+      .material-card {
+        background-color: #1f2937;
+        border: 1px solid #374151;
+      }
+      .shine-button {
+        position: relative;
+        overflow: hidden;
+        background-color: #ff4e50;
+        color: white;
+        font-weight: 600;
+        padding: 0.75rem 1.5rem;
+        border-radius: 9999px;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+        box-shadow: 0 4px 6px rgba(255, 78, 80, 0.3);
+      }
+      .shine-button:hover {
+        background-color: #fc913a;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 10px rgba(252, 145, 58, 0.4);
+      }
+      .shine-button::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.2),
+          transparent
+        );
+        transition: left 0.6s ease;
+      }
+      .shine-button:hover::after {
+        left: 100%;
+      }
+    </style>
+  </head>
+  <body class="antialiased">
+    <div class="container mx-auto p-4 md:p-8 max-w-7xl">
+      <header class="text-center my-8 md:my-16 relative pt-8">
+        <div class="absolute top-0 right-0 flex items-center space-x-4">
+          <a
+            href="https://github.com/devlopersabbir/executeme"
+            target="_blank"
+            class="flex items-center text-gray-400 hover:text-gray-200 transition-colors duration-200"
+          >
+            <i class="fab fa-github text-3xl"></i>
+          </a>
+          <span class="text-xl font-bold text-gray-200 flex items-center">
+            <i class="far fa-star text-yellow-400 mr-2"></i> 1.2k
+          </span>
+        </div>
+        <h1 class="text-4xl md:text-6xl font-black tracking-tight">
+          <span class="gradient-text">The Anatomy of `executeme`</span>
+        </h1>
+        <p class="mt-4 text-lg md:text-xl text-gray-400 max-w-3xl mx-auto">
+          A deep dive into the performance, resource management, and operational
+          flow of a high-performance code execution engine.
+        </p>
+      </header>
+
+      <main>
+        <section id="kpis" class="mb-16 md:mb-24">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+            <div class="kpi-card p-8 rounded-xl">
+              <p class="text-6xl font-extrabold gradient-text">1.2M+</p>
+              <h3 class="mt-2 text-xl font-semibold text-gray-200">
+                Total Executions
+              </h3>
+              <p class="text-gray-400 mt-1">
+                Code snippets processed since launch.
+              </p>
+            </div>
+            <div class="kpi-card p-8 rounded-xl">
+              <p class="text-6xl font-extrabold gradient-text">245ms</p>
+              <h3 class="mt-2 text-xl font-semibold text-gray-200">
+                Average Execution Speed
+              </h3>
+              <p class="text-gray-400 mt-1">
+                From API request to response delivery.
+              </p>
+            </div>
+            <div class="kpi-card p-8 rounded-xl">
+              <p class="text-6xl font-extrabold gradient-text">99.8%</p>
+              <h3 class="mt-2 text-xl font-semibold text-gray-200">
+                Success Rate
+              </h3>
+              <p class="text-gray-400 mt-1">
+                Successfully executed user submissions.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section id="flow" class="mb-16 md:mb-24">
+          <h2 class="text-3xl font-bold text-center mb-4">
+            The Execution Flow
+          </h2>
+          <p class="text-gray-400 text-center max-w-2xl mx-auto mb-12">
+            Each code submission follows a secure, step-by-step journey from
+            request to response, ensuring isolation and efficiency at every
+            stage.
+          </p>
+
+          <div
+            class="flex flex-col md:flex-row items-stretch justify-center flex-wrap gap-y-6 md:gap-y-0"
+          >
+            <!-- Step 1 -->
+            <div
+              class="flex flex-col items-center flex-1 min-w-[200px] max-w-[280px] md:max-w-none"
+            >
+              <div class="flow-step-new rounded-xl w-full">
+                <span class="flow-step-number">1</span>
+                <i class="fas fa-paper-plane flow-step-icon"></i>
+                <span class="font-semibold text-lg md:text-xl text-gray-200"
+                  >API Request Received</span
+                >
+              </div>
+              <div class="flow-arrow-connector block md:hidden">
+                <i class="fas fa-arrow-down"></i>
+              </div>
+            </div>
+
+            <!-- Horizontal Arrow 1-2 (Desktop) -->
+            <div class="flow-arrow-connector hidden md:block">
+              <i class="fas fa-arrow-right"></i>
+            </div>
+
+            <!-- Step 2 -->
+            <div
+              class="flex flex-col items-center flex-1 min-w-[200px] max-w-[280px] md:max-w-none"
+            >
+              <div class="flow-step-new rounded-xl w-full">
+                <span class="flow-step-number">2</span>
+                <i class="fas fa-folder-plus flow-step-icon"></i>
+                <span class="font-semibold text-lg md:text-xl text-gray-200"
+                  >Secure Temp Directory Created</span
+                >
+              </div>
+              <div class="flow-arrow-connector block md:hidden">
+                <i class="fas fa-arrow-down"></i>
+              </div>
+            </div>
+
+            <!-- Horizontal Arrow 2-3 (Desktop) -->
+            <div class="flow-arrow-connector hidden md:block">
+              <i class="fas fa-arrow-right"></i>
+            </div>
+
+            <!-- Step 3 -->
+            <div
+              class="flex flex-col items-center flex-1 min-w-[200px] max-w-[280px] md:max-w-none"
+            >
+              <div class="flow-step-new rounded-xl w-full">
+                <span class="flow-step-number">3</span>
+                <i class="fab fa-docker flow-step-icon"></i>
+                <span class="font-semibold text-lg md:text-xl text-gray-200"
+                  >Isolated Docker Container Runs Code</span
+                >
+              </div>
+              <div class="flow-arrow-connector block md:hidden">
+                <i class="fas fa-arrow-down"></i>
+              </div>
+            </div>
+
+            <!-- Horizontal Arrow 3-4 (Desktop) -->
+            <div class="flow-arrow-connector hidden md:block">
+              <i class="fas fa-arrow-right"></i>
+            </div>
+
+            <!-- Step 4 -->
+            <div
+              class="flex flex-col items-center flex-1 min-w-[200px] max-w-[280px] md:max-w-none"
+            >
+              <div class="flow-step-new rounded-xl w-full">
+                <span class="flow-step-number">4</span>
+                <i class="fas fa-terminal flow-step-icon"></i>
+                <span class="font-semibold text-lg md:text-xl text-gray-200"
+                  >Output & Errors Captured</span
+                >
+              </div>
+              <div class="flow-arrow-connector block md:hidden">
+                <i class="fas fa-arrow-down"></i>
+              </div>
+            </div>
+
+            <!-- Horizontal Arrow 4-5 (Desktop) -->
+            <div class="flow-arrow-connector hidden md:block">
+              <i class="fas fa-arrow-right"></i>
+            </div>
+
+            <!-- Step 5 -->
+            <div
+              class="flex flex-col items-center flex-1 min-w-[200px] max-w-[280px] md:max-w-none"
+            >
+              <div class="flow-step-new rounded-xl w-full">
+                <span class="flow-step-number">5</span>
+                <i class="fas fa-check-circle flow-step-icon"></i>
+                <span class="font-semibold text-lg md:text-xl text-gray-200"
+                  >Response Sent & Temp Files Cleaned</span
+                >
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="language-landscape" class="mb-16 md:mb-24">
+          <h2 class="text-3xl font-bold text-center mb-12">
+            Language Landscape
+          </h2>
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div class="material-card p-6 rounded-lg">
+              <h3 class="text-xl font-bold mb-1 text-center">
+                Execution by Language
+              </h3>
+              <p class="text-gray-400 text-sm text-center mb-4">
+                Python is the most popular language on the platform, accounting
+                for nearly half of all submissions.
+              </p>
+              <div class="chart-container">
+                <canvas id="languageDonutChart"></canvas>
+              </div>
+            </div>
+            <div class="material-card p-6 rounded-lg">
+              <h3 class="text-xl font-bold mb-1 text-center">
+                Average Execution Speed by Language (ms)
+              </h3>
+              <p class="text-gray-400 text-sm text-center mb-4">
+                Node.js shows the fastest execution times, while Java has a
+                higher startup overhead.
+              </p>
+              <div class="chart-container">
+                <canvas id="speedBarChart"></canvas>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="resource-management" class="mb-16 md:mb-24">
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div class="text-left">
+              <h2 class="text-3xl font-bold">Efficient Resource Management</h2>
+              <p class="text-gray-400 mt-4">
+                Resource usage is carefully monitored. The radar chart shows a
+                normalized comparison of CPU usage, memory allocation, and
+                container cold-start times across languages. This data helps
+                optimize the underlying infrastructure and ensure platform
+                stability.
+              </p>
+              <ul class="mt-6 space-y-2 text-gray-300">
+                <li>
+                  <span class="font-bold text-[#FF4E50]">CPU Usage:</span>
+                  Node.js is highly efficient, whereas Java's JVM requires more
+                  processing power.
+                </li>
+                <li>
+                  <span class="font-bold text-[#FC913A]"
+                    >Memory Allocation:</span
+                  >
+                  Python's memory footprint is moderate, sitting between the
+                  lightweight Node.js and memory-intensive Java.
+                </li>
+                <li>
+                  <span class="font-bold text-[#F9D423]">Startup Time:</span>
+                  Node.js containers have near-instant cold starts, a key
+                  performance advantage.
+                </li>
+              </ul>
+            </div>
+            <div class="material-card p-6 rounded-lg">
+              <div class="chart-container">
+                <canvas id="resourceRadarChart"></canvas>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section
+          id="performance-trends"
+          class="mb-16 md:mb-24 material-card p-6 rounded-lg lg:col-span-2"
+        >
+          <h2 class="text-3xl font-bold text-center mb-4">
+            Platform Growth & Stability
+          </h2>
+          <p class="text-gray-400 text-center max-w-3xl mx-auto mb-8">
+            Tracking daily executions shows consistent growth in user
+            engagement, while the average execution time remains stable and low,
+            indicating a scalable and reliable architecture.
+          </p>
+          <div
+            class="chart-container h-[400px] max-h-[500px] mx-auto"
+            style="max-width: 900px"
+          >
+            <canvas id="trendsLineChart"></canvas>
+          </div>
+        </section>
+
+        <section id="sponsors" class="mb-16 md:mb-24 text-center">
+          <div
+            class="bg-gray-900 rounded-xl p-8 md:p-12 border border-gray-700 shadow-lg"
+          >
+            <h2 class="text-4xl font-extrabold gradient-text mb-4">
+              Support Our Open Source Journey!
+            </h2>
+            <p class="text-gray-300 text-lg md:text-xl max-w-3xl mx-auto mb-8">
+              `executeme` is a passion project built for the developer
+              community. Your support fuels continuous improvement, new
+              features, and ongoing maintenance. Every contribution, big or
+              small, makes a difference!
+            </p>
+            <div
+              class="flex flex-col md:flex-row justify-center items-center gap-6"
+            >
+              <a
+                href="https://github.com/sponsors/devlopersabbir"
+                target="_blank"
+                class="shine-button"
+              >
+                <i class="fas fa-heart mr-2"></i> Sponsor on GitHub
+              </a>
+              <a
+                href="https://buymeacoffee.com/devlopersabbir"
+                target="_blank"
+                class="shine-button"
+                style="
+                  background-color: #fc913a;
+                  box-shadow: 0 4px 6px rgba(252, 145, 58, 0.3);
+                "
+              >
+                <i class="fas fa-mug-hot mr-2"></i> Buy Me a Coffee
+              </a>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <footer class="text-center pt-8 mt-16 border-t border-gray-700">
+        <p class="text-gray-400">
+          Infographic created to visualize the `executeme` project.
+        </p>
+        <p class="text-sm text-gray-500 mt-2">Built by Sabbir Hossain Shuvo</p>
+        <div class="mt-4">
+          <a
+            href="https://github.com/devlopersabbir/executeme"
+            target="_blank"
+            class="text-[#FF4E50] hover:underline"
+            >View Project on GitHub</a
+          >
+        </div>
+      </footer>
+    </div>
+
+    <script>
+      const wrapText = (str, maxWidth = 16) => {
+        if (typeof str !== 'string' || str.length <= maxWidth) {
+          return str;
+        }
+        const words = str.split(' ');
+        let currentLine = '';
+        const lines = [];
+        words.forEach((word) => {
+          if ((currentLine + ' ' + word).trim().length > maxWidth) {
+            lines.push(currentLine.trim());
+            currentLine = word;
+          } else {
+            currentLine = (currentLine + ' ' + word).trim();
+          }
+        });
+        if (currentLine) {
+          lines.push(currentLine.trim());
+        }
+        return lines;
+      };
+
+      const tooltipTitleCallback = (tooltipItems) => {
+        const item = tooltipItems[0];
+        let label = item.chart.data.labels[item.dataIndex];
+        if (Array.isArray(label)) {
+          return label.join(' ');
+        } else {
+          return label;
+        }
+      };
+
+      const chartColors = {
+        red: '#FF4E50',
+        orange: '#FC913A',
+        yellow: '#F9D423',
+        grid: 'rgba(255, 255, 255, 0.1)',
+        ticks: '#9CA3AF',
+        pointBg: '#111827',
+      };
+
+      Chart.defaults.color = chartColors.ticks;
+      Chart.defaults.borderColor = chartColors.grid;
+
+      const commonPlugins = {
+        legend: {
+          position: 'bottom',
+          labels: {
+            color: chartColors.ticks,
+            boxWidth: 15,
+            padding: 20,
+          },
+        },
+        tooltip: {
+          callbacks: {
+            title: tooltipTitleCallback,
+          },
+          backgroundColor: '#111827',
+          titleColor: '#E5E7EB',
+          bodyColor: '#D1D5DB',
+          borderColor: '#374151',
+          borderWidth: 1,
+          padding: 10,
+          displayColors: true,
+          boxPadding: 4,
+        },
+      };
+
+      const languageDonutCtx = document
+        .getElementById('languageDonutChart')
+        .getContext('2d');
+      new Chart(languageDonutCtx, {
+        type: 'doughnut',
+        data: {
+          labels: ['Python', 'Node.js', 'Java'],
+          datasets: [
+            {
+              label: 'Execution Count',
+              data: [48, 37, 15],
+              backgroundColor: [
+                chartColors.red,
+                chartColors.orange,
+                chartColors.yellow,
+              ],
+              borderColor: '#1F2937',
+              borderWidth: 4,
+              hoverOffset: 8,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          cutout: '70%',
+          plugins: commonPlugins,
+        },
+      });
+
+      const speedBarCtx = document
+        .getElementById('speedBarChart')
+        .getContext('2d');
+      new Chart(speedBarCtx, {
+        type: 'bar',
+        data: {
+          labels: ['Node.js', 'Python', 'Java'],
+          datasets: [
+            {
+              label: 'Milliseconds',
+              data: [110, 280, 450],
+              backgroundColor: [
+                chartColors.orange,
+                chartColors.red,
+                chartColors.yellow,
+              ],
+              borderColor: [
+                chartColors.orange,
+                chartColors.red,
+                chartColors.yellow,
+              ],
+              borderWidth: 1,
+              borderRadius: 4,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              beginAtZero: true,
+              title: { display: true, text: 'Time (ms)' },
+            },
+          },
+          plugins: {
+            ...commonPlugins,
+            legend: { display: false },
+          },
+        },
+      });
+
+      const resourceRadarCtx = document
+        .getElementById('resourceRadarChart')
+        .getContext('2d');
+      new Chart(resourceRadarCtx, {
+        type: 'radar',
+        data: {
+          labels: ['CPU Usage', 'Memory Allocation', 'Startup Time'],
+          datasets: [
+            {
+              label: 'Python',
+              data: [65, 70, 50],
+              fill: true,
+              backgroundColor: 'rgba(255, 78, 80, 0.2)',
+              borderColor: chartColors.red,
+              pointBackgroundColor: chartColors.red,
+              pointBorderColor: '#fff',
+              pointHoverBackgroundColor: '#fff',
+              pointHoverBorderColor: chartColors.red,
+            },
+            {
+              label: 'Node.js',
+              data: [40, 30, 20],
+              fill: true,
+              backgroundColor: 'rgba(252, 145, 58, 0.2)',
+              borderColor: chartColors.orange,
+              pointBackgroundColor: chartColors.orange,
+              pointBorderColor: '#fff',
+              pointHoverBackgroundColor: '#fff',
+              pointHoverBorderColor: chartColors.orange,
+            },
+            {
+              label: 'Java',
+              data: [85, 90, 80],
+              fill: true,
+              backgroundColor: 'rgba(249, 212, 35, 0.2)',
+              borderColor: chartColors.yellow,
+              pointBackgroundColor: chartColors.yellow,
+              pointBorderColor: '#fff',
+              pointHoverBackgroundColor: '#fff',
+              pointHoverBorderColor: chartColors.yellow,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: commonPlugins,
+          scales: {
+            r: {
+              angleLines: { color: chartColors.grid },
+              grid: { color: chartColors.grid },
+              pointLabels: { color: chartColors.ticks, font: { size: 14 } },
+              ticks: {
+                color: chartColors.ticks,
+                backdropColor: 'transparent',
+                stepSize: 20,
+              },
+            },
+          },
+        },
+      });
+
+      const trendsLineCtx = document
+        .getElementById('trendsLineChart')
+        .getContext('2d');
+      new Chart(trendsLineCtx, {
+        type: 'line',
+        data: {
+          labels: [
+            'Day 1',
+            'Day 2',
+            'Day 3',
+            'Day 4',
+            'Day 5',
+            'Day 6',
+            'Day 7',
+          ],
+          datasets: [
+            {
+              label: 'Executions per Day (in thousands)',
+              data: [150, 155, 162, 160, 170, 175, 185],
+              borderColor: chartColors.red,
+              backgroundColor: 'rgba(255, 78, 80, 0.1)',
+              fill: true,
+              tension: 0.4,
+              yAxisID: 'y',
+            },
+            {
+              label: 'Average Execution Time (ms)',
+              data: [250, 248, 245, 246, 244, 245, 242],
+              borderColor: chartColors.orange,
+              backgroundColor: 'transparent',
+              fill: false,
+              tension: 0.4,
+              yAxisID: 'y1',
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          interaction: {
+            mode: 'index',
+            intersect: false,
+          },
+          stacked: false,
+          plugins: commonPlugins,
+          scales: {
+            x: {},
+            y: {
+              type: 'linear',
+              display: true,
+              position: 'left',
+              title: { display: true, text: 'Executions (k)' },
+            },
+            y1: {
+              type: 'linear',
+              display: true,
+              position: 'right',
+              title: { display: true, text: 'Time (ms)' },
+              grid: {
+                drawOnChartArea: false,
+              },
+            },
+          },
+        },
+      });
+    </script>
+  </body>
+</html>

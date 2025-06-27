@@ -1,0 +1,13 @@
+# Ignore dependencies
+node_modules
+
+# Ignore logs
+npm-debug.log
+yarn-debug.log
+pnpm-debug.log
+
+# Ignore Docker + temp stuff
+Dockerfile
+.dockerignore
+temp
+.env

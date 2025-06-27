@@ -1,0 +1,16 @@
+{
+  // Disable formatting for .dockerignore
+  "[dockerignore]": {
+    "editor.formatOnSave": false,
+    "editor.defaultFormatter": null
+  },
+
+  // Recommended: Prettier config for consistency
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+
+  // Optional: Turn off formatting for plaintext files
+  "[plaintext]": {
+    "editor.formatOnSave": false
+  }
+}

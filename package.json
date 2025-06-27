@@ -1,7 +1,7 @@
 {
   "name": "executeme",
-  "version": "1.0.0",
-  "description": "",
+  "version": "0.0.1",
+  "description": "A robust and secure backend service for executing user-submitted code in isolated Docker containers. Supports multiple programming languages like Python, Node.js, and Java, with resource limiting for safe execution. Ideal for online compilers, coding platforms, and educational tools.",
   "main": "app.js",
   "scripts": {
     "dev": "nodemon app.js",
@@ -11,20 +11,52 @@
     "type": "git",
     "url": "git+https://github.com/devlopersabbir/executeme.git"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": [
+    "code-executor",
+    "online-compiler",
+    "backend",
+    "docker",
+    "code-runner",
+    "nodejs",
+    "python",
+    "java",
+    "code-execution",
+    "api",
+    "restful",
+    "open-source",
+    "containerization",
+    "programming-platform",
+    "educational-tool",
+    "sandbox"
+  ],
+  "author": {
+    "email": "devlopersabbir@gmail.com",
+    "name": "Sabbir Hossain Shuvo",
+    "url": "https://devlopersabbir.github.io"
+  },
+  "license": "MIT",
   "type": "commonjs",
   "bugs": {
     "url": "https://github.com/devlopersabbir/executeme/issues"
   },
   "homepage": "https://github.com/devlopersabbir/executeme#readme",
   "dependencies": {
-    "dockerode": "^4.0.7",
     "express": "^5.1.0",
+    "util": "^0.12.5",
     "uuid": "^11.1.0"
   },
   "devDependencies": {
+    "dotenv": "^16.6.0",
     "nodemon": "^3.1.10"
-  }
+  },
+  "funding": [
+    {
+      "type": "github",
+      "url": "https://github.com/sponsors/devlopersabbir"
+    },
+    {
+      "type": "patreon",
+      "url": "https://www.patreon.com/devlopersabbir"
+    }
+  ]
 }

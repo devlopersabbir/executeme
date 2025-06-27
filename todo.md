@@ -1,0 +1,1 @@
+- [ ] VPS deployment is left only

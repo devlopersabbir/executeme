@@ -1,0 +1,5 @@
+FROM openjdk:21-jdk-slim
+
+# Set the working directory inside the container.
+# User's Java source code or compiled JAR/class files will be mounted into this directory.
+WORKDIR /app
