@@ -1,0 +1,20 @@
+export const editorOptions = {
+  readOnly: true,
+  minimap: { enabled: false },
+  fontSize: 14,
+  lineNumbers: 'on' as const,
+  scrollBeyondLastLine: false,
+  automaticLayout: true,
+  wordWrap: 'on' as const,
+  contextmenu: false,
+  selectOnLineNumbers: false,
+  lineDecorationsWidth: 10,
+  lineNumbersMinChars: 3,
+  glyphMargin: false,
+  folding: false,
+  fontFamily:
+    "'Fira Code', 'JetBrains Mono', 'Monaco', 'Menlo', 'Ubuntu Mono', monospace",
+  fontLigatures: true,
+  renderWhitespace: 'none' as const,
+  renderControlCharacters: false,
+};

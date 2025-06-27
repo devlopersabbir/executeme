@@ -6,12 +6,14 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Copy, Download, Terminal } from 'lucide-react';
+import { Language, Status } from '@/@types';
+import { editorOptions } from '@/constants/editor';
 
 interface OutputViewerProps {
   output: string;
-  language: string;
+  language: Language;
   executionTime?: number;
-  status: 'success' | 'error' | 'running';
+  status: Status;
 }
 
 export function OutputViewer({
@@ -35,32 +37,11 @@ export function OutputViewer({
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `output_${Date.now()}.txt`;
+    a.download = `executeme_${Date.now()}.txt`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
-  };
-
-  const editorOptions = {
-    readOnly: true,
-    minimap: { enabled: false },
-    fontSize: 14,
-    lineNumbers: 'on' as const,
-    scrollBeyondLastLine: false,
-    automaticLayout: true,
-    wordWrap: 'on' as const,
-    contextmenu: false,
-    selectOnLineNumbers: false,
-    lineDecorationsWidth: 10,
-    lineNumbersMinChars: 3,
-    glyphMargin: false,
-    folding: false,
-    fontFamily:
-      "'Fira Code', 'JetBrains Mono', 'Monaco', 'Menlo', 'Ubuntu Mono', monospace",
-    fontLigatures: true,
-    renderWhitespace: 'none' as const,
-    renderControlCharacters: false,
   };
 
   return (
@@ -112,9 +93,10 @@ export function OutputViewer({
         <div className="relative">
           <Editor
             height="300px"
-            language="plaintext"
+            language={'plaintext'}
             value={
-              output || 'No output yet. Execute your code to see results here.'
+              output ||
+              `No ${language} output yet. Execute your code to see results here.`
             }
             theme={
               status === 'error' ? 'vs' : theme === 'dark' ? 'vs-dark' : 'vs'

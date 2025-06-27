@@ -5,7 +5,7 @@ import { useTheme } from 'next-themes';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Loader2 } from 'lucide-react';
-import { LANGUAGE_MAP, SAMPLE_CODE } from '@/constants';
+import { LANGUAGE_MAP } from '@/constants';
 import { Language } from '@/@types';
 
 interface CodeEditorProps {

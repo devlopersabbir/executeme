@@ -1,7 +1,5 @@
 'use client';
 
-import type React from 'react';
-
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
@@ -11,7 +9,6 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   Select,
   SelectContent,
@@ -20,7 +17,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { Upload, Play, FileText, Clock, Code2 } from 'lucide-react';
+import { Play, FileText, Clock, Code2 } from 'lucide-react';
 import { SUPPORTED_LANGUAGES } from '@/constants/language';
 import { CodeEditor } from './_components/code-editor';
 import { OutputViewer } from './_components/output-viewer';
@@ -30,15 +27,12 @@ import { ExecutionResult, Language } from '@/@types';
 export default function ExecuteMePlatform() {
   const [selectedLanguage, setSelectedLanguage] = useState<Language>('python');
   const [code, setCode] = useState('');
-  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [executionResult, setExecutionResult] =
     useState<ExecutionResult | null>(null);
   const [isExecuting, setIsExecuting] = useState(false);
 
   const executeCode = async () => {
-    if (!code.trim()) {
-      return;
-    }
+    if (!code.trim()) return;
 
     setIsExecuting(true);
     setExecutionResult({
@@ -59,6 +53,7 @@ export default function ExecuteMePlatform() {
         language: selectedLanguage,
       });
     } catch (err) {
+      console.log(err);
       setExecutionResult({
         status: 'error',
         output: 'error is here',
