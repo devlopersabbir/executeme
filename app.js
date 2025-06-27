@@ -1,10 +1,10 @@
 const express = require('express');
-const fs = require('fs').promises; // Use promise-based fs for async operations
+const fs = require('fs').promises;
 const util = require('util');
 const exec = util.promisify(require('child_process').exec);
 const path = require('path');
-const { v4: uuidv4 } = require('uuid'); // For unique identifiers
-const dotenv = require('dotenv'); // For loading environment variables
+const { v4: uuidv4 } = require('uuid');
+const dotenv = require('dotenv');
 dotenv.config();
 
 const app = express();
@@ -24,12 +24,11 @@ const LANGUAGE_CONFIG = {
   },
   java: {
     image: 'executor-java',
-    mainFile: 'Main.java', // User will send Main.java
-    cmd: 'sh -c "javac Main.java && java Main"', // Compile and then run
+    mainFile: 'Main.java',
+    cmd: 'sh -c "javac Main.java && java Main"',
   },
 };
 
-// Get the host's project root path from environment variable,
 // which will be passed from docker-compose.yml
 const HOST_PROJECT_ROOT = process.env.HOST_PROJECT_ROOT;
 
