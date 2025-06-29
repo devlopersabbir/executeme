@@ -1,7 +1,6 @@
 "use client";
 
 import { Editor } from "@monaco-editor/react";
-import { useTheme } from "next-themes";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -18,26 +17,16 @@ interface OutputViewerProps {
 
 export function OutputViewer({
   output,
-  language, // Although output is plaintext, keeping language prop for consistency and future expansion
   executionTime,
   status,
 }: OutputViewerProps) {
-  const { theme } = useTheme(); // Keep for consistency, though we're overriding here
-
   const copyOutput = () => {
-    // Using document.execCommand for broader iframe compatibility
-    const textarea = document.createElement("textarea");
-    textarea.value = output;
-    document.body.appendChild(textarea);
-    textarea.select();
     try {
-      document.execCommand("copy");
-      // You can add a visual feedback like a temporary "Copied!" message
+      navigator.clipboard.writeText(output);
       console.log("Output copied to clipboard!");
     } catch (err) {
       console.error("Failed to copy text:", err);
     }
-    document.body.removeChild(textarea);
   };
 
   const downloadOutput = () => {

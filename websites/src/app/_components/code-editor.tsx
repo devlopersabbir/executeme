@@ -1,7 +1,6 @@
 "use client";
 
 import { Editor } from "@monaco-editor/react";
-import { useTheme } from "next-themes";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Loader2 } from "lucide-react";
@@ -23,8 +22,6 @@ export function CodeEditor({
   height = "300px",
   readOnly = false,
 }: CodeEditorProps) {
-  const { theme } = useTheme(); // You can still use this for overall app theme logic if needed elsewhere
-
   const handleEditorChange = (newValue: string | undefined) => {
     onChange(newValue || "");
   };

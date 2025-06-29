@@ -23,6 +23,7 @@ import { CodeEditor } from "./_components/code-editor";
 import { OutputViewer } from "./_components/output-viewer";
 import { executeCodeAction } from "./_actions/execute";
 import { ExecutionResult, Language } from "@/@types";
+import Image from "next/image";
 
 export default function ExecuteMePlatform() {
   const [selectedLanguage, setSelectedLanguage] = useState<Language>("python");
@@ -53,12 +54,7 @@ export default function ExecuteMePlatform() {
         language: selectedLanguage,
       });
     } catch (err) {
-      setExecutionResult({
-        status: "error",
-        output: "error is here",
-        executionTime: 0,
-        language: selectedLanguage,
-      });
+      console.log(err);
     } finally {
       setIsExecuting(false);
     }
@@ -236,10 +232,11 @@ export default function ExecuteMePlatform() {
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 bg-yellow-500 hover:bg-yellow-600 text-gray-900 font-bold py-2 px-4 rounded-full transition-colors duration-200 shadow-md"
             >
-              <img
+              <Image
                 src="https://www.buymeacoffee.com/assets/img/BMC-btn-logo.svg" // Official BMC logo
                 alt="Buy Me A Coffee"
-                className="h-5 w-5"
+                height={20}
+                width={20}
               />
               <span>Buy Me A Coffee</span>
             </a>

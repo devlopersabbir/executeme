@@ -25,9 +25,10 @@ export async function executeCodeAction(input: Input): Promise<Output> {
       output: response.data.output,
       responseTime: Math.round(responseTime),
     };
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     return {
-      output: error.response.data.details,
+      output: error?.response?.data.details,
       responseTime: Math.round(responseTime),
     };
   } finally {
