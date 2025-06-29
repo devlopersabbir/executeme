@@ -1,8 +1,8 @@
 export const LANGUAGE_MAP = {
-  python: 'python',
-  javascript: 'nodejs',
-  //   typescript: 'typescript',
-  //   java: 'java',
+  python: "python",
+  javascript: "nodejs",
+  typescript: "typescript",
+  java: "java",
   //   cpp: 'cpp',
   //   c: 'c',
   //   go: 'go',

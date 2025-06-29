@@ -1,8 +1,8 @@
 export const SUPPORTED_LANGUAGES = [
-  { value: 'python', label: 'Python', extension: '.py' },
-  { value: 'nodejs', label: 'JavaScript', extension: '.js' },
-  // { value: 'typescript', label: 'TypeScript', extension: '.ts' },
-  // { value: 'java', label: 'Java', extension: '.java' },
+  { value: "python", label: "Python", extension: ".py" },
+  { value: "nodejs", label: "JavaScript", extension: ".js" },
+  { value: "typescript", label: "TypeScript", extension: ".ts" },
+  { value: "java", label: "Java", extension: ".java" },
   // { value: 'cpp', label: 'C++', extension: '.cpp' },
   // { value: 'c', label: 'C', extension: '.c' },
   // { value: 'go', label: 'Go', extension: '.go' },

@@ -5,6 +5,12 @@ services:
       dockerfile: Dockerfile.nodejs
     image: executor-nodejs:latest
 
+  deno-image:
+    build:
+      context: .
+      dockerfile: Dockerfile.deno
+    image: executor-deno:latest
+
   python-image:
     build:
       context: .
@@ -26,7 +32,7 @@ services:
       - PORT=${PORT}
       - HOST_PROJECT_ROOT=${PWD}
     ports:
-      - '6000:6000'
+      - "6000:6000"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./temp:/app/temp

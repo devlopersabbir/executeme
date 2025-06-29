@@ -1,0 +1,5 @@
+FROM denoland/deno:alpine-1.44.1
+
+WORKDIR /app
+
+# Entrypoint command will be overridden at runtime

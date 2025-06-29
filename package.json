@@ -2,10 +2,9 @@
   "name": "executeme",
   "version": "0.0.1",
   "description": "A robust and secure backend service for executing user-submitted code in isolated Docker containers. Supports multiple programming languages like Python, Node.js, and Java, with resource limiting for safe execution. Ideal for online compilers, coding platforms, and educational tools.",
-  "main": "app.js",
   "scripts": {
     "dev": "nodemon app.js",
-    "start": "node app.js"
+    "start": "node --trace-warnings app.js"
   },
   "repository": {
     "type": "git",
@@ -34,13 +33,15 @@
     "name": "Sabbir Hossain Shuvo",
     "url": "https://devlopersabbir.github.io"
   },
-  "license": "MIT",
-  "type": "commonjs",
   "bugs": {
     "url": "https://github.com/devlopersabbir/executeme/issues"
   },
   "homepage": "https://github.com/devlopersabbir/executeme#readme",
+  "license": "MIT",
+  "main": "app.js",
+  "type": "module",
   "dependencies": {
+    "cors": "^2.8.5",
     "express": "^5.1.0",
     "util": "^0.12.5",
     "uuid": "^11.1.0"

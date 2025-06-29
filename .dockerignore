@@ -11,3 +11,7 @@ Dockerfile
 .dockerignore
 temp
 .env
+
+# Ignore website and browser
+browsers
+websites

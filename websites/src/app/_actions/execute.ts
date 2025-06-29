@@ -1,9 +1,9 @@
-'use server';
+"use server";
 
-import { Language } from '@/@types';
-import { baseUri } from '@/constants/base';
-import axios from 'axios';
-import { performance } from 'perf_hooks';
+import { Language } from "@/@types";
+import { baseUri } from "@/constants/base";
+import axios from "axios";
+import { performance } from "perf_hooks";
 
 type Input = {
   language: Language;
@@ -15,17 +15,22 @@ type Output = {
 };
 export async function executeCodeAction(input: Input): Promise<Output> {
   const start = performance.now();
+  let responseTime = 0;
+  let end = 0;
   try {
     const response = await axios.post(`${baseUri}/run`, input);
-    const end = performance.now();
-    const responseTime = end - start;
+    responseTime = end - start;
 
     return {
       output: response.data.output,
       responseTime: Math.round(responseTime),
     };
-  } catch (error) {
-    console.error('Failed to post data:', error);
-    throw new Error('Fail to execute');
+  } catch (error: any) {
+    return {
+      output: error.response.data.details,
+      responseTime: Math.round(responseTime),
+    };
+  } finally {
+    end = performance.now();
   }
 }

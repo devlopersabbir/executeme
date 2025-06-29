@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import { Editor } from '@monaco-editor/react';
-import { useTheme } from 'next-themes';
-import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Loader2 } from 'lucide-react';
-import { LANGUAGE_MAP } from '@/constants';
-import { Language } from '@/@types';
+import { Editor } from "@monaco-editor/react";
+import { useTheme } from "next-themes";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Loader2 } from "lucide-react";
+import { LANGUAGE_MAP } from "@/constants";
+import { Language } from "@/@types";
 
 interface CodeEditorProps {
   value: string;
@@ -20,34 +20,34 @@ export function CodeEditor({
   value,
   onChange,
   language,
-  height = '300px',
+  height = "300px",
   readOnly = false,
 }: CodeEditorProps) {
-  const { theme } = useTheme();
+  const { theme } = useTheme(); // You can still use this for overall app theme logic if needed elsewhere
 
   const handleEditorChange = (newValue: string | undefined) => {
-    onChange(newValue || '');
+    onChange(newValue || "");
   };
 
   const editorOptions = {
     minimap: { enabled: false },
-    fontSize: 16,
-    lineNumbers: 'on' as const,
+    fontSize: 18,
+    lineNumbers: "on" as const,
     roundedSelection: false,
     scrollBeyondLastLine: true,
     automaticLayout: true,
     tabSize: 2,
     insertSpaces: true,
-    wordWrap: 'on' as const,
+    wordWrap: "on" as const,
     contextmenu: true,
     selectOnLineNumbers: true,
     lineDecorationsWidth: 10,
     lineNumbersMinChars: 3,
     glyphMargin: false,
     folding: true,
-    cursorBlinking: 'blink' as const,
-    cursorStyle: 'line' as const,
-    renderWhitespace: 'selection' as const,
+    cursorBlinking: "blink" as const,
+    cursorStyle: "line" as const,
+    renderWhitespace: "selection" as const,
     renderControlCharacters: false,
     fontFamily:
       "'Fira Code', 'JetBrains Mono', 'Monaco', 'Menlo', 'Ubuntu Mono', monospace",
@@ -55,32 +55,34 @@ export function CodeEditor({
     smoothScrolling: true,
     mouseWheelZoom: true,
     readOnly,
+    // --- Added for suggestions ---
+    quickSuggestions: true, // Enables quick suggestions as you type
+    suggestOnTriggerCharacters: true, // Shows suggestions when trigger characters are typed (e.g., '.')
+    // --- End Added for suggestions ---
   };
 
   return (
-    <Card className="overflow-hidden">
+    <Card className="overflow-hidden bg-gray-900 border-none">
       <CardContent className="p-0">
-        <div className="flex items-center justify-between px-4 py-2 bg-slate-50 border-b">
+        {/* Top bar for editor controls - now dark */}
+        <div className="flex items-center justify-between px-4 py-2 bg-gray-900 border-b border-gray-700">
           <div className="flex items-center gap-2">
             <div className="flex gap-1">
-              <div className="w-3 h-3 rounded-full bg-red-400"></div>
-              <div className="w-3 h-3 rounded-full bg-yellow-400"></div>
-              <div className="w-3 h-3 rounded-full bg-green-400"></div>
+              {/* Traffic light dots - adjusted colors for dark theme */}
+              <div className="w-3 h-3 rounded-full bg-red-500"></div>
+              <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+              <div className="w-3 h-3 rounded-full bg-green-500"></div>
             </div>
-            <span className="text-sm font-medium text-slate-600">
+            {/* Language display - adjusted text color */}
+            <span className="text-sm font-medium text-gray-300">
               {language}
-              {/* {LANGUAGE_MAP[language] === 'cpp'
-                ? 'cpp'
-                : LANGUAGE_MAP[language] === 'python'
-                ? 'py'
-                : LANGUAGE_MAP[language] === 'javascript'
-                ? 'js'
-                : LANGUAGE_MAP[language] === 'typescript'
-                ? 'ts'
-                : LANGUAGE_MAP[language]} */}
             </span>
           </div>
-          <Badge variant="secondary" className="text-xs">
+          {/* Language Badge */}
+          <Badge
+            variant="secondary"
+            className="text-xs bg-gray-700 text-gray-200"
+          >
             {language.charAt(0).toUpperCase() + language.slice(1)}
           </Badge>
         </div>
@@ -88,16 +90,18 @@ export function CodeEditor({
         <div className="relative">
           <Editor
             height={height}
-            language={LANGUAGE_MAP[language] || 'plaintext'}
-            value={value ?? '// Start coding here...'}
+            // Ensure the language is correctly mapped for Monaco to provide suggestions
+            language={LANGUAGE_MAP[language] || "plaintext"}
+            value={value ?? "// Start coding here..."}
             defaultLanguage={LANGUAGE_MAP[language]}
             saveViewState={false}
             onChange={handleEditorChange}
-            theme={theme === 'dark' ? 'vs-dark' : 'vs'}
+            // Force vs-dark theme for the editor
+            theme="vs-dark"
             options={editorOptions}
             loading={
               <div className="flex items-center justify-center h-full">
-                <Loader2 className="w-6 h-6 animate-spin text-slate-400" />
+                <Loader2 className="w-6 h-6 animate-spin text-gray-400" />
               </div>
             }
           />

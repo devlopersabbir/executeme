@@ -1,3 +1,9 @@
 FROM node:20-alpine
+
+# Set working directory
 WORKDIR /app
-# CMD will be overridden or provided by the mount
+
+# Install TypeScript globally
+RUN npm install -g typescript
+
+# Optionally, create tsconfig.json here if needed
