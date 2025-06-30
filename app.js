@@ -100,7 +100,20 @@ app.post("/run", async (req, res) => {
   }
 });
 
-const PORT = process.env.PORT || 5000;
+app.get(["/", "/index", "/index.html"], (_, res) => {
+  res.sendFile(path.join(process.cwd(), "./", "views", "index.html"));
+});
+app.use((req, res) => {
+  res.status(404);
+  if (req.accepts("html")) {
+    res.sendFile(path.join(process.cwd(), "./", "views", "404.html"));
+  } else if (req.accepts("json")) {
+    res.json({ message: "404 Not found" });
+  } else {
+    res.type("txt").send("404 not found");
+  }
+});
+const PORT = process.env.PORT || 6000;
 app.listen(PORT, () => {
   console.log(`Code executor backend listening on port ${PORT}`);
 });

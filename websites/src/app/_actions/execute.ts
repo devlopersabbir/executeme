@@ -9,33 +9,44 @@ type Input = {
   language: Language;
   code: string;
 };
+
 type Output = {
   output: string;
   responseTime: number; // in milliseconds
 };
+
 export async function executeCodeAction(input: Input): Promise<Output> {
   const start = performance.now();
-  let responseTime = 0;
-  let end = 0;
+
   try {
     const response = await axios.post(`${baseUri}/run`, input);
-    end = performance.now();
-    responseTime = end - start;
+    const end = performance.now();
 
     return {
       output: response.data.output,
-      responseTime: Math.round(responseTime),
+      responseTime: Math.round(end - start),
     };
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
-    end = performance.now();
-    responseTime = end - start;
+    const end = performance.now();
+    const responseTime = Math.round(end - start);
 
-    const errorMessage = error.response.data.details as unknown as string;
-    const response = {
-      output: errorMessage,
-      responseTime: Math.round(responseTime),
-    };
-    throw new Error(JSON.stringify(response));
+    // Safer extraction of error message
+    const errorMessage =
+      error?.response?.data?.details || "Unknown error occurred";
+
+    // Optional: log more useful error info for debugging
+    console.error("executeCodeAction Error:", {
+      message: errorMessage,
+      status: error?.response?.status,
+      data: error?.response?.data,
+    });
+
+    // Throw a serializable error object
+    throw new Error(
+      JSON.stringify({
+        output: errorMessage,
+        responseTime,
+      })
+    );
   }
 }

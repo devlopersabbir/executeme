@@ -55,6 +55,7 @@ export default function ExecuteMePlatform() {
       });
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
+      console.log(err);
       const error = JSON.parse(err.message);
       setExecutionResult({
         status: "error",
