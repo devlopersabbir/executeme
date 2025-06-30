@@ -19,17 +19,15 @@ export async function executeCodeAction(input: Input): Promise<Output> {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     const end = performance.now();
-    const responseTime = Math.round(end - start);
 
-    // Safer extraction of error message
-    const errorMessage =
-      error?.response?.data?.details || "Unknown error occurred";
+    const output =
+      error?.response?.data?.details ||
+      error?.message ||
+      "Unknown error occurred";
 
-    throw new Error(
-      JSON.stringify({
-        output: errorMessage,
-        responseTime,
-      })
-    );
+    return {
+      output,
+      responseTime: Math.round(end - start),
+    };
   }
 }

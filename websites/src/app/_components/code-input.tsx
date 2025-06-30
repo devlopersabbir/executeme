@@ -9,7 +9,7 @@ import {
 import { Clock, Code2, Play } from "lucide-react";
 import LanguageSelection from "./editor-view/language-selection";
 import { Button } from "@/components/ui/button";
-import { ExecutionResult, Language, Output } from "@/@types";
+import { ExecutionResult, Language } from "@/@types";
 import { useState, useTransition } from "react";
 import { executeCodeAction } from "../_actions/execute";
 import { CodeEditor } from "./editor-view/code-editor";
@@ -25,6 +25,7 @@ export default function CodeInput() {
 
   const executeCode = async () => {
     if (!code.trim()) return;
+
     startExecution(async () => {
       setExecutionResult({
         status: "running",
@@ -34,33 +35,23 @@ export default function CodeInput() {
         },
         language: selectedLanguage,
       });
-      try {
-        const data = await executeCodeAction({
-          language: selectedLanguage,
-          code,
-        });
-        setExecutionResult({
-          status: "success",
-          results: {
-            output: data.output,
-            responseTime: data.responseTime,
-          },
-          language: selectedLanguage,
-        });
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      } catch (err: any) {
-        const error = JSON.parse(err.message) as Output;
-        setExecutionResult({
-          status: "error",
-          results: {
-            output: error.output,
-            responseTime: error.responseTime,
-          },
-          language: selectedLanguage,
-        });
-      }
+
+      const result = await executeCodeAction({
+        language: selectedLanguage,
+        code,
+      });
+
+      // Use a simple heuristic: if output contains "Error" or has failed response
+      const isError = result.output?.toLowerCase().includes("error");
+
+      setExecutionResult({
+        status: isError ? "error" : "success",
+        results: result,
+        language: selectedLanguage,
+      });
     });
   };
+
   return (
     <>
       <Card className="h-fit bg-white/5 backdrop-blur-sm border border-white/10 text-white">
