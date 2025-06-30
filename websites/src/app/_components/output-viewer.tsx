@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Copy, Download, Terminal } from "lucide-react";
 import { Language, Status } from "@/@types";
-import { editorOptions } from "@/constants/editor"; // Assuming editorOptions are general
+import { outputEditorOptions } from "@/constants"; // Assuming editorOptions are general
 
 interface OutputViewerProps {
   output: string;
@@ -41,17 +41,8 @@ export function OutputViewer({
     URL.revokeObjectURL(url);
   };
 
-  // Adjust editor options for output viewer (read-only, no suggestions)
-  const outputEditorOptions = {
-    ...editorOptions, // Inherit general options
-    readOnly: true, // Output should be read-only
-    quickSuggestions: false, // No suggestions needed for output
-    renderLineHighlight: "none" as const, // No line highlighting for cleaner output
-    wordWrap: "on" as const, // Ensure long lines wrap
-  };
-
   return (
-    <Card className="overflow-hidden bg-gray-900 border-none">
+    <Card className="overflow-hidden bg-gray-900 border-none p-0">
       <CardContent className="p-0">
         {/* Top bar for output controls - now dark */}
         <div className="flex items-center justify-between px-4 py-2 bg-gray-900 border-b border-gray-700">

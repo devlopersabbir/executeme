@@ -2,25 +2,25 @@ services:
   nodejs-image:
     build:
       context: .
-      dockerfile: Dockerfile.nodejs
+      dockerfile: docker/Dockerfile.nodejs
     image: executor-nodejs:latest
 
   deno-image:
     build:
       context: .
-      dockerfile: Dockerfile.deno
+      dockerfile: docker/Dockerfile.deno
     image: executor-deno:latest
 
   python-image:
     build:
       context: .
-      dockerfile: Dockerfile.python
+      dockerfile: docker/Dockerfile.python
     image: executor-python:latest
 
   java-image:
     build:
       context: .
-      dockerfile: Dockerfile.jvm
+      dockerfile: docker/Dockerfile.jvm
     image: executor-java:latest
 
   nodejs-server-image:

@@ -1,3 +1,4 @@
+export * from "./editor";
 export const LANGUAGE_MAP = {
   python: "python",
   javascript: "nodejs",

@@ -19,6 +19,7 @@ export async function executeCodeAction(input: Input): Promise<Output> {
   let end = 0;
   try {
     const response = await axios.post(`${baseUri}/run`, input);
+    end = performance.now();
     responseTime = end - start;
 
     return {
@@ -27,11 +28,14 @@ export async function executeCodeAction(input: Input): Promise<Output> {
     };
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
-    return {
-      output: error?.response?.data.details,
+    end = performance.now();
+    responseTime = end - start;
+
+    const errorMessage = error.response.data.details as unknown as string;
+    const response = {
+      output: errorMessage,
       responseTime: Math.round(responseTime),
     };
-  } finally {
-    end = performance.now();
+    throw new Error(JSON.stringify(response));
   }
 }

@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Loader2 } from "lucide-react";
 import { LANGUAGE_MAP } from "@/constants";
 import { Language } from "@/@types";
+import { codeEditorOptions } from "@/constants";
 
 interface CodeEditorProps {
   value: string;
@@ -20,46 +21,13 @@ export function CodeEditor({
   onChange,
   language,
   height = "300px",
-  readOnly = false,
 }: CodeEditorProps) {
   const handleEditorChange = (newValue: string | undefined) => {
     onChange(newValue || "");
   };
 
-  const editorOptions = {
-    minimap: { enabled: false },
-    fontSize: 18,
-    lineNumbers: "on" as const,
-    roundedSelection: false,
-    scrollBeyondLastLine: true,
-    automaticLayout: true,
-    tabSize: 2,
-    insertSpaces: true,
-    wordWrap: "on" as const,
-    contextmenu: true,
-    selectOnLineNumbers: true,
-    lineDecorationsWidth: 10,
-    lineNumbersMinChars: 3,
-    glyphMargin: false,
-    folding: true,
-    cursorBlinking: "blink" as const,
-    cursorStyle: "line" as const,
-    renderWhitespace: "selection" as const,
-    renderControlCharacters: false,
-    fontFamily:
-      "'Fira Code', 'JetBrains Mono', 'Monaco', 'Menlo', 'Ubuntu Mono', monospace",
-    fontLigatures: true,
-    smoothScrolling: true,
-    mouseWheelZoom: true,
-    readOnly,
-    // --- Added for suggestions ---
-    quickSuggestions: true, // Enables quick suggestions as you type
-    suggestOnTriggerCharacters: true, // Shows suggestions when trigger characters are typed (e.g., '.')
-    // --- End Added for suggestions ---
-  };
-
   return (
-    <Card className="overflow-hidden bg-gray-900 border-none">
+    <Card className="bg-gray-900 border-none p-0">
       <CardContent className="p-0">
         {/* Top bar for editor controls - now dark */}
         <div className="flex items-center justify-between px-4 py-2 bg-gray-900 border-b border-gray-700">
@@ -95,7 +63,7 @@ export function CodeEditor({
             onChange={handleEditorChange}
             // Force vs-dark theme for the editor
             theme="vs-dark"
-            options={editorOptions}
+            options={codeEditorOptions}
             loading={
               <div className="flex items-center justify-center h-full">
                 <Loader2 className="w-6 h-6 animate-spin text-gray-400" />

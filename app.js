@@ -84,7 +84,7 @@ app.post("/run", async (req, res) => {
     if (stderr) {
       return res.status(500).json({
         error: "Runtime error",
-        details: extractError(stderr),
+        details: extractError(stderr), // TODO: need to set a extractor
       });
     }
     return res.status(200).json({
@@ -93,14 +93,13 @@ app.post("/run", async (req, res) => {
   } catch (err) {
     return res.status(500).json({
       error: "Internal Server error",
-      details: extractError(err.message),
+      details: extractError(err.message), // TODO: need to set a extractor
     });
   } finally {
     await fs.rm(tempDirInsideNodeServer, { recursive: true, force: true });
   }
 });
 
-// Use PORT from environment variables, or default to 6000
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Code executor backend listening on port ${PORT}`);

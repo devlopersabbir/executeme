@@ -17,13 +17,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Play, FileText, Clock, Code2, Github } from "lucide-react"; // Import Github icon
+import { Play, FileText, Clock, Code2, Github } from "lucide-react";
 import { SUPPORTED_LANGUAGES } from "@/constants/language";
 import { CodeEditor } from "./_components/code-editor";
 import { OutputViewer } from "./_components/output-viewer";
 import { executeCodeAction } from "./_actions/execute";
 import { ExecutionResult, Language } from "@/@types";
-import Image from "next/image";
+import Footer from "@/components/shared/footer";
 
 export default function ExecuteMePlatform() {
   const [selectedLanguage, setSelectedLanguage] = useState<Language>("python");
@@ -53,8 +53,15 @@ export default function ExecuteMePlatform() {
         executionTime: data.responseTime,
         language: selectedLanguage,
       });
-    } catch (err) {
-      console.log(err);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (err: any) {
+      const error = JSON.parse(err.message);
+      setExecutionResult({
+        status: "error",
+        output: error.output,
+        executionTime: error.responseTime,
+        language: selectedLanguage,
+      });
     } finally {
       setIsExecuting(false);
     }
@@ -193,7 +200,7 @@ export default function ExecuteMePlatform() {
             </CardHeader>
             <CardContent>
               {!executionResult ? (
-                <div className="text-center py-12 text-gray-400">
+                <div className="text-center text-gray-400">
                   <Play className="w-14 h-14 mx-auto mb-4 opacity-50 text-purple-300" />
                   <p className="text-lg">
                     Execute your code to see results here
@@ -212,36 +219,7 @@ export default function ExecuteMePlatform() {
         </div>
 
         {/* Footer */}
-        <div className="text-center mt-12 text-sm text-gray-400 space-y-4">
-          <p>
-            Developed with ❤️ by{" "}
-            <a
-              href="https://devlopersabbir.github.io/executeme/" // Link to your documentation/about page
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-white hover:underline font-medium"
-            >
-              Sabbir Hossain Shuvo
-            </a>
-          </p>
-          {/* Buy Me A Coffee Button */}
-          <div>
-            <a
-              href="https://buymeacoffee.com/devlopersabbir"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 bg-yellow-500 hover:bg-yellow-600 text-gray-900 font-bold py-2 px-4 rounded-full transition-colors duration-200 shadow-md"
-            >
-              <Image
-                src="https://www.buymeacoffee.com/assets/img/BMC-btn-logo.svg" // Official BMC logo
-                alt="Buy Me A Coffee"
-                height={20}
-                width={20}
-              />
-              <span>Buy Me A Coffee</span>
-            </a>
-          </div>
-        </div>
+        <Footer />
       </div>
     </div>
   );
