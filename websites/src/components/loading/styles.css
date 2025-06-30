@@ -1,0 +1,79 @@
+.flow-circle {
+  fill: #3a3a3a;
+  stroke: #555;
+  stroke-width: 2;
+  transition: fill 0.3s ease-in-out, stroke 0.3s ease-in-out;
+}
+
+.active-flow-circle {
+  fill: #ff6b6b;
+  stroke: #ff6b6b;
+  filter: drop-shadow(0 0 8px #ff6b6b);
+}
+
+@keyframes progressStep1 {
+  0%,
+  16.7% {
+    opacity: 1;
+  }
+  16.8%,
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes progressStep2 {
+  0%,
+  16.7% {
+    opacity: 0;
+  }
+  16.8%,
+  33.3% {
+    opacity: 1;
+  }
+  33.4%,
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes progressStep3 {
+  0%,
+  33.3% {
+    opacity: 0;
+  }
+  33.4%,
+  50% {
+    opacity: 1;
+  }
+  50.1%,
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes progressStep4 {
+  0%,
+  50% {
+    opacity: 0;
+  }
+  50.1%,
+  66.7% {
+    opacity: 1;
+  }
+  66.8%,
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes progressStep5 {
+  0%,
+  66.7% {
+    opacity: 0;
+  }
+  66.8%,
+  83.3% {
+    opacity: 1;
+  }
+  83.4%,
+  100% {
+    opacity: 0;
+  }
+}

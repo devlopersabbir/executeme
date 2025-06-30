@@ -19,7 +19,7 @@ RUN npm install
 COPY . .
 
 # Set environment variables
-ENV PORT=6000
+ENV PORT=9091
 
 # Create a temporary directory that will be used for mounting (if it doesn't exist on host)
 # This command ensures the directory exists within the image,
@@ -28,7 +28,7 @@ ENV PORT=6000
 RUN mkdir -p /app/temp
 
 # Expose the port your Node.js application listens on
-EXPOSE 6000
+EXPOSE 9091
 
 # Command to run your application when the container starts
 CMD ["npm", "start"]

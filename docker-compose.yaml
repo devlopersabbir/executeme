@@ -32,7 +32,7 @@ services:
       - PORT=${PORT}
       - HOST_PROJECT_ROOT=${PWD}
     ports:
-      - "6000:6000"
+      - "9091:9091"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./temp:/app/temp

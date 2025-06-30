@@ -113,7 +113,7 @@ app.use((req, res) => {
     res.type("txt").send("404 not found");
   }
 });
-const PORT = process.env.PORT || 6000;
+const PORT = process.env.PORT || 9091;
 app.listen(PORT, () => {
   console.log(`Code executor backend listening on port ${PORT}`);
 });
