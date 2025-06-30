@@ -26,6 +26,7 @@ export async function executeCodeAction(input: Input): Promise<Output> {
       output: response.data.output,
       responseTime: Math.round(end - start),
     };
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     const end = performance.now();
     const responseTime = Math.round(end - start);

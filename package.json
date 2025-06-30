@@ -1,6 +1,6 @@
 {
   "name": "executeme",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A robust and secure backend service for executing user-submitted code in isolated Docker containers. Supports multiple programming languages like Python, Node.js, and Java, with resource limiting for safe execution. Ideal for online compilers, coding platforms, and educational tools.",
   "scripts": {
     "dev": "nodemon app.js",
