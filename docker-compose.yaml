@@ -29,6 +29,23 @@ services:
       dockerfile: docker/Dockerfile.kotlin
     image: executor-kotlin:latest
 
+  nodejs-server-image:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: nodejs-server-image:latest
+    environment:
+      - PORT=9091
+      - HOST_PROJECT_ROOT=${PWD}
+    ports:
+      - "9091:9091"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./temp:/app/temp
+    networks:
+      - app-network
+    restart: unless-stopped
+
   executeme-nginx:
     image: nginx:alpine
     ports:
@@ -40,21 +57,6 @@ services:
       - nodejs-server-image
     networks:
       - app-network
-    restart: unless-stopped
-
-  nodejs-server-image:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    image: executeme-nodejs-server:latest
-    environment:
-      - PORT=${PORT}
-      - HOST_PROJECT_ROOT=${PWD}
-    ports:
-      - "9091:9091"
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - ./temp:/app/temp
     restart: unless-stopped
 
 networks:
