@@ -9,6 +9,10 @@ import { LANGUAGE_CONFIG } from "./language/config.js";
 import { exec as executeProcess } from "child_process";
 import { allowOrigins } from "./origin/index.js";
 import { extractError } from "./utils/index.js";
+import http from "http";
+import { Server as SocketServer } from "socket.io";
+import NodeCache from "node-cache";
+
 const exec = promisify(executeProcess);
 const fs = fileSystem.promises;
 dotenv.config();
@@ -20,9 +24,46 @@ app.use(
     origin: allowOrigins,
   })
 );
+const server = http.createServer(app);
+const io = new SocketServer(server, {
+  cors: {
+    origin: allowOrigins,
+    methods: ["GET", "POST"],
+  },
+  pingTimeout: 60000, // 60 seconds
+  pingInterval: 25000, // 25 seconds
+  connectTimeout: 45000, // 45 seconds
+});
 
-// which will be passed from docker-compose.yml
+const cache = new NodeCache({
+  stdTTL: 60 * 60, // Cache TTL of 1 hour
+});
+/** socket setup to display all current active users length */
+io.on("connection", (socket) => {
+  const coders = cache.get("active_coders");
+  console.log(coders);
+  if (!cache.has(socket.id)) {
+    coders
+      ? cache.set("active_coders", [...coders, socket.id])
+      : cache.set("active_coders", [socket.id]);
+  }
+  emitActiveCoder();
+  socket.on("disconnect", () => {
+    const coders = cache.get("active_coders");
+    if (coders) {
+      cache.set(
+        "active_coders",
+        coders.filter((coder) => coder !== socket.id)
+      );
+    }
+
+    emitActiveCoder();
+  });
+});
+
+/* which will be passed from docker-compose.yaml */
 const HOST_PROJECT_ROOT = process.env.HOST_PROJECT_ROOT;
+/** Project root directory */
 const directory_name = process.cwd();
 
 app.post("/run", async (req, res) => {
@@ -39,18 +80,20 @@ app.post("/run", async (req, res) => {
   if (!langConfig)
     return res.status(400).json({ error: `Unsupported language: ${language}` });
 
-  // Generate a unique name for the temporary directory
+  /* Generate a unique name for the temporary directory */
   const tempDirName = uuidv4();
-  // This is the path *inside the nodejs-server container* where the code will be written
+  /* This is the path *inside the nodejs-server container* where the code will be written */
   const tempDirInsideNodeServer = path.join(
     directory_name,
     "temp",
     tempDirName
   );
+  /* code file path where our code will be store */
   const codeFilePath = path.join(tempDirInsideNodeServer, langConfig.mainFile);
 
-  // This is the absolute path *on the host machine* that corresponds to tempDirInsideNodeServer.
-  // We use HOST_PROJECT_ROOT environment variable to construct this absolute path.
+  /** 1. This is the absolute path **on the host machine** that corresponds to tempDirInsideNodeServer.
+  2. We use HOST_PROJECT_ROOT environment variable to construct this absolute path.
+  */
   if (!HOST_PROJECT_ROOT) {
     console.error(
       "HOST_PROJECT_ROOT environment variable is not set. Volume mounts might fail."
@@ -58,11 +101,12 @@ app.post("/run", async (req, res) => {
     return res.status(500).json({
       error: "Server configuration error",
       details:
-        "HOST_PROJECT_ROOT environment variable is missing. Please ensure it's set in docker-compose.yaml.",
+        "HOST_PROJECT_ROOT environment variable is missing. Please ensure it's set in docker-compose.yaml",
       isDeveloper: true,
     });
   }
   const hostVolumePath = path.join(HOST_PROJECT_ROOT, "temp", tempDirName);
+  console.log("host: ", hostVolumePath);
 
   try {
     // 1. Create the temporary directory inside the nodejs-server container
@@ -113,7 +157,11 @@ app.use((req, res) => {
     res.type("txt").send("404 not found");
   }
 });
+function emitActiveCoder() {
+  const activeUsers = cache.get("active_coders");
+  io.emit("active_coders", activeUsers);
+}
 const PORT = process.env.PORT || 9091;
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`Code executor backend listening on port ${PORT}`);
 });

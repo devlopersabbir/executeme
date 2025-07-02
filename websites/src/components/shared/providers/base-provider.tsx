@@ -1,6 +1,7 @@
 import { Toaster } from "@/components/ui/sonner";
 import { PropsWithChildren } from "react";
 import { ThemeProvider } from "./theme-provider";
+import SocketProvider from "./socket-provider";
 
 export default function BaseProvider({ children }: PropsWithChildren) {
   return (
@@ -10,8 +11,9 @@ export default function BaseProvider({ children }: PropsWithChildren) {
       enableSystem
       disableTransitionOnChange
     >
-      {children}
-      <Toaster />
+      <SocketProvider>
+        {children} <Toaster />
+      </SocketProvider>
     </ThemeProvider>
   );
 }

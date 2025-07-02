@@ -3,6 +3,7 @@ export const SUPPORTED_LANGUAGES = [
   { value: "nodejs", label: "JavaScript", extension: ".js" },
   { value: "typescript", label: "TypeScript", extension: ".ts" },
   { value: "java", label: "Java", extension: ".java" },
+  { value: "kotlin", label: "Kotlin", extension: ".kt" },
   // { value: 'cpp', label: 'C++', extension: '.cpp' },
   // { value: 'c', label: 'C', extension: '.c' },
   // { value: 'go', label: 'Go', extension: '.go' },

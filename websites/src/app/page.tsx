@@ -11,7 +11,7 @@ export default function ExecuteMePlatform() {
       <div className="relative z-10 max-w-7xl mx-auto p-4">
         <Header />
 
-        <div className="grid lg:grid-cols-2 gap-6">
+        <div className="grid lg:grid-cols-2 md:grid-cols-1 gap-6 transition-all ease-in-out">
           <CodeInput />
         </div>
 

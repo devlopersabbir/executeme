@@ -1,0 +1,27 @@
+# Use a slim OpenJDK 21 image as the base, same as your Java setup
+FROM openjdk:21-jdk-slim
+
+# Set the working directory inside the container.
+# User's Kotlin source code will be mounted into this directory.
+WORKDIR /app
+
+# Install necessary tools: curl for downloading, unzip for extracting.
+# This works for Debian-based slim images.
+RUN apt-get update && apt-get install -y curl unzip && rm -rf /var/lib/apt/lists/*
+
+# Define Kotlin version as an argument for easier updates
+ARG KOTLIN_VERSION=1.9.20 
+# NOTE: As of 2025-07-02, 1.9.20 is a good stable choice.
+# You might want to update this to the absolute latest stable version if needed.
+
+# Download, extract, and clean up the Kotlin compiler
+RUN curl -L https://github.com/JetBrains/kotlin/releases/download/v${KOTLIN_VERSION}/kotlin-compiler-${KOTLIN_VERSION}.zip -o /tmp/kotlin-compiler.zip \
+    && unzip /tmp/kotlin-compiler.zip -d /opt/kotlin \
+    && rm /tmp/kotlin-compiler.zip
+
+# Add the Kotlin compiler's 'bin' directory to the PATH
+ENV PATH="/opt/kotlin/kotlinc/bin:${PATH}"
+
+# This CMD keeps the container running quietly when started by `docker-compose up`.
+# It does NOT affect the actual execution when your Node.js server uses `docker run`.
+CMD ["tail", "-f", "/dev/null"]

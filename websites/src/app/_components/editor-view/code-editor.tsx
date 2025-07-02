@@ -27,8 +27,8 @@ export function CodeEditor({
   };
 
   return (
-    <Card className="bg-gray-900 border-none p-0">
-      <CardContent className="p-0">
+    <Card className="bg-gray-900 border-none p-0 w-full max-w-full overflow-x-hidden">
+      <CardContent className="p-0 w-full overflow-x-hidden">
         {/* Top bar for editor controls - now dark */}
         <div className="flex items-center justify-between px-4 py-2 bg-gray-900 border-b border-gray-700">
           <div className="flex items-center gap-2">
@@ -52,14 +52,16 @@ export function CodeEditor({
           </Badge>
         </div>
 
-        <div className="relative">
+        <div className="relative w-full overflow-x-hidden">
           <Editor
             height={height}
+            width={"100%"}
             // Ensure the language is correctly mapped for Monaco to provide suggestions
-            language={LANGUAGE_MAP[language] || "plaintext"}
+            className="w-full"
+            language={LANGUAGE_MAP[language]}
             value={value ?? "// Start coding here..."}
             defaultLanguage={LANGUAGE_MAP[language]}
-            saveViewState={false}
+            saveViewState={true}
             onChange={handleEditorChange}
             // Force vs-dark theme for the editor
             theme="vs-dark"

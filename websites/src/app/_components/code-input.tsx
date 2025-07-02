@@ -54,7 +54,7 @@ export default function CodeInput() {
 
   return (
     <>
-      <Card className="h-fit bg-white/5 backdrop-blur-sm border border-white/10 text-white">
+      <Card className="h-fit bg-white/5 backdrop-blur-sm border border-white/10 text-white w-full">
         <CardHeader className="flex justify-between">
           <div>
             <CardTitle className="flex items-center gap-2 text-white">
@@ -71,7 +71,7 @@ export default function CodeInput() {
             setSelectedLanguage={setSelectedLanguage}
           />
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-4 w-full">
           <CodeEditor
             value={code}
             onChange={setCode}
