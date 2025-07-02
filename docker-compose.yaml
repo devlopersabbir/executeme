@@ -33,7 +33,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: executeme-nodejs-server:latest
+    image: nodejs-server-image:latest
     environment:
       - PORT=9091
       - HOST_PROJECT_ROOT=${PWD}
