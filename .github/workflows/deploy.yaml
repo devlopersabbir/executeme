@@ -30,10 +30,16 @@ jobs:
             # Navigate to the executeme directory on the VPS.
             cd ~/workspace/executeme
 
+            # make sure we are in executeme directory
+            ls -a
+
             # Pull the latest code from the 'main' branch of the GitHub repository.
-            git pull 
+            git pull origin main
+
+            # Check git status to make sure everything is up to date
+            git status
 
             # Execute your bash script.
-            bash ./script.sh
+            bash ./scripts.sh
 
             echo "Deployment complete!"
