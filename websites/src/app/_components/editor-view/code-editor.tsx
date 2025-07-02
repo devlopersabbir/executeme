@@ -58,9 +58,9 @@ export function CodeEditor({
             width={"100%"}
             // Ensure the language is correctly mapped for Monaco to provide suggestions
             className="w-full"
-            language={LANGUAGE_MAP[language]}
+            language={language}
             value={value ?? "// Start coding here..."}
-            defaultLanguage={LANGUAGE_MAP[language]}
+            defaultLanguage={language}
             saveViewState={true}
             onChange={handleEditorChange}
             // Force vs-dark theme for the editor
