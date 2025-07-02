@@ -119,7 +119,7 @@ app.post("/run", async (req, res) => {
     // 3. Prepare and execute the Docker command
     // The -v flag uses the hostVolumePath (absolute path on host) as the source,
     // and mounts it to '/app' inside the executor container.
-    const runCommand = `docker run --rm --memory=256m --cpus=0.5 -v "${hostVolumePath}:/app" ${langConfig.image} ${langConfig.cmd}`;
+    const runCommand = `docker run --rm --memory=512m --cpus=0.5 -v "${hostVolumePath}:/app" ${langConfig.image} ${langConfig.cmd}`;
 
     console.log(`[Executor] Attempting to run command: ${runCommand}`);
 

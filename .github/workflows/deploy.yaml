@@ -31,13 +31,13 @@ jobs:
             cd ~/workspace/executeme
 
             # make sure we are in executeme directory
-            ls -a
+            # ls -a
 
             # Pull the latest code from the 'main' branch of the GitHub repository.
             git pull origin main
 
             # Check git status to make sure everything is up to date
-            git status
+            # git status
 
             # Execute your bash script.
             bash ./scripts.sh

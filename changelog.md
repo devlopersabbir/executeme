@@ -22,3 +22,5 @@
 - [feat] shows a floating button for displaying online coders
 - [fix] Fixed mobile responsive issues
 - [feat] Nginx setup for getting free ssl on our server
+- [feat] deployment github action to automate the vps deploy
+- [chore] Incress the memory uses for only **Kotlin** language support
