@@ -4,6 +4,7 @@
   "description": "A robust and secure backend service for executing user-submitted code in isolated Docker containers. Supports multiple programming languages like Python, Node.js, and Java, with resource limiting for safe execution. Ideal for online compilers, coding platforms, and educational tools.",
   "scripts": {
     "dev": "nodemon app.js",
+    "test": "vitest run --reporter verbose --pool forks",
     "start": "node --trace-warnings app.js"
   },
   "repository": {
@@ -43,12 +44,15 @@
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^5.1.0",
+    "node-cache": "^5.1.2",
+    "socket.io": "^4.8.1",
     "util": "^0.12.5",
     "uuid": "^11.1.0"
   },
   "devDependencies": {
     "dotenv": "^16.6.0",
-    "nodemon": "^3.1.10"
+    "nodemon": "^3.1.10",
+    "vitest": "^3.2.4"
   },
   "funding": [
     {

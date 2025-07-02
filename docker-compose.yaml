@@ -23,6 +23,12 @@ services:
       dockerfile: docker/Dockerfile.jvm
     image: executor-java:latest
 
+  kotlin-image:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.kotlin
+    image: executor-kotlin:latest
+
   nodejs-server-image:
     build:
       context: .

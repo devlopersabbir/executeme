@@ -1,3 +1,8 @@
-docker build -t executor-python -f Dockerfile.python .
-docker build -t executor-nodejs -f Dockerfile.nodejs .
-# Add more for other languages (e.g., executor-java, executor-go)
+## delete all containers including its volumes use
+docker rm -vf $(docker ps -aq)
+
+## delete all the images
+docker rmi -f $(docker images -aq)
+
+## create container with new force command
+docker compose up --force-recreate

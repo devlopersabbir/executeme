@@ -19,4 +19,9 @@ export const LANGUAGE_CONFIG = {
     mainFile: "Main.java",
     cmd: 'sh -c "javac Main.java && java Main"',
   },
+  kotlin: {
+    image: "executor-kotlin",
+    mainFile: "index.kt",
+    cmd: 'sh -c "kotlinc index.kt -include-runtime -d index.jar && java -jar index.jar"',
+  },
 };

@@ -9,10 +9,15 @@
 
 ## v0.0.2 Releases 🎉
 
-- **TypeScript** Language support with `denoland`
-- Extracted actual error from the whole error
-- Readable and user-friendly output details error
-- Reduce execution time
-- Root routes and invalid path view `html` page setup
-- Improve websites code complex issue
-- Use server action to hide **API endpoint**
+- [feat] **Added kotlin language support**
+- [feat] **TypeScript** Language support with `denoland`
+- [chore] Extracted actual error from the whole error
+- [chore] Readable and user-friendly output details error
+- [chore] Reduce execution time
+- [feat] Root routes and invalid path view `html` page setup
+- [refact] Improve websites code complex issue
+- [feat] Use server action to hide **API endpoint**
+
+- [feat] View live online coders with in-memory cache i backend
+- [feat] shows a floating button for displaying online coders
+- [fix] Fixed mobile responsive issues

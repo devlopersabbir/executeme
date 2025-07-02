@@ -119,4 +119,10 @@
   body {
     @apply bg-background text-foreground;
   }
+  .animated-background-gradient {
+    @apply absolute inset-0 bg-gradient-to-br from-purple-500/20 via-pink-500/20 to-blue-500/20;
+  }
+  .bottom-accent-line {
+    @apply absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-purple-500 via-pink-500 to-blue-500;
+  }
 }
