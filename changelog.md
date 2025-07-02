@@ -21,3 +21,4 @@
 - [feat] View live online coders with in-memory cache i backend
 - [feat] shows a floating button for displaying online coders
 - [fix] Fixed mobile responsive issues
+- [feat] Nginx setup for getting free ssl on our server
