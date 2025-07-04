@@ -1,6 +1,7 @@
 {
-  "name": "executeme-desktop",
-  "version": "0.0.1",
+  "name": "executeme",
+  "displayName": "Execute Me",
+  "version": "0.0.2",
   "description": "Executeme is a cross platoform program compiler",
   "main": "./out/main/index.js",
   "author": {

@@ -2,7 +2,6 @@ import { Input } from "@shared/types";
 import { IpcMainInvokeEvent } from "electron";
 import https from "https";
 import axios from "axios";
-import { is } from "@electron-toolkit/utils";
 
 export const handleExecuteCode = async (_: IpcMainInvokeEvent, payload: Input) => {
   const agent = new https.Agent({
@@ -11,9 +10,7 @@ export const handleExecuteCode = async (_: IpcMainInvokeEvent, payload: Input) =
   const axiosInstance = axios.create({
     httpsAgent: agent
   });
-  const baseAPI = is.dev
-    ? process.env.RENDERER_VITE_SERVER_BASE_URL
-    : process.env.RENDERER_VITE_SERVER_BASE_URL;
+  const baseAPI = "https://145.223.97.55:9292";
   const start = performance.now();
   try {
     const { data } = await axiosInstance.post(`${baseAPI}/run`, payload);
