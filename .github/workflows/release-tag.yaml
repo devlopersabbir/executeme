@@ -13,13 +13,9 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      - name: Create Release for Tag
-        id: release_tag
-        uses: actions/create-release@v1
-        env:
-          RELEASE_NOTE_WRITE: ${{ secrets.RELEASE_NOTE_WRITE }}
+      - name: Generate Release Notes
+        id: notes
+        uses: RedCrafter07/release-notes-action@v1
         with:
-          tag_name: ${{ github.ref }}
-          release_name: ${{ github.ref }}
-          body: |
-            Please refer to [changelog.md](https://github.com/devlopersabbir/executeme/blob/${{ github.ref_name }}/changelog.md) for details
+          tag-name: ${{ github.event.inputs.tags }}
+          token: ${{ secrets.GITHUB_TOKEN }}
