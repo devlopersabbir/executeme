@@ -1,35 +1,23 @@
-import Versions from './components/Versions'
-import electronLogo from './assets/electron.svg'
+import Footer from "@renderer/components/shared/footer";
+import DynamicBackground from "@renderer/components/shared/effects/dynamic-background";
+import Header from "@renderer/components/header";
+import CodeInput from "./_components/code-input";
 
-function App(): React.JSX.Element {
-  const ipcHandle = (): void => window.electron.ipcRenderer.send('ping')
-
+export default function ExecuteMePlatform() {
   return (
-    <>
-      <img alt="logo" className="logo" src={electronLogo} />
-      <div className="creator">Powered by electron-vite</div>
-      <div className="text">
-        Build an Electron app with <span className="react">React</span>
-        &nbsp;and <span className="ts">TypeScript</span>
-      </div>
-      <p className="tip">
-        Please try pressing <code>F12</code> to open the devTool
-      </p>
-      <div className="actions">
-        <div className="action">
-          <a href="https://electron-vite.org/" target="_blank" rel="noreferrer">
-            Documentation
-          </a>
-        </div>
-        <div className="action">
-          <a target="_blank" rel="noreferrer" onClick={ipcHandle}>
-            Send IPC
-          </a>
-        </div>
-      </div>
-      <Versions></Versions>
-    </>
-  )
-}
+    <div className="relative min-h-screen bg-gray-950 overflow-hidden">
+      <DynamicBackground />
 
-export default App
+      <div className="relative z-10 max-w-7xl mx-auto p-4">
+        <Header />
+
+        <div className="grid lg:grid-cols-2 md:grid-cols-1 gap-6 transition-all ease-in-out">
+          <CodeInput />
+        </div>
+
+        {/* Footer */}
+        <Footer />
+      </div>
+    </div>
+  );
+}

@@ -13,9 +13,7 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      - name: Generate Release Notes
-        id: notes
-        uses: RedCrafter07/release-notes-action@v1
-        with:
-          tag-name: ${{ github.event.inputs.tags }}
-          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Create Release for Tag
+        run: echo "TODO: we have to create a Release notes genetor CI"
+        env:
+          RELEASE_NOTE_WRITE: ${{ secrets.RELEASE_NOTE_WRITE }}

@@ -1,22 +1,23 @@
-import { contextBridge } from 'electron'
-import { electronAPI } from '@electron-toolkit/preload'
+import { contextBridge, ipcRenderer } from "electron";
+// import { electronAPI } from "@electron-toolkit/preload";
+import { Input } from "@shared/types";
+import { ApplicationInterface } from "./preload";
 
-// Custom APIs for renderer
-const api = {}
+const applicationApi: ApplicationInterface = {
+  // electron: electronAPI,
 
-// Use `contextBridge` APIs to expose Electron APIs to
-// renderer only if context isolation is enabled, otherwise
-// just add to the DOM global.
+  api: {
+    getMonacoBasePath: () => "monaco-editor://vs",
+    executeCode: (payload: Input) => ipcRenderer.invoke("executecode:post", payload)
+  }
+};
+
 if (process.contextIsolated) {
   try {
-    contextBridge.exposeInMainWorld('electron', electronAPI)
-    contextBridge.exposeInMainWorld('api', api)
+    contextBridge.exposeInMainWorld("applicationApi", applicationApi);
   } catch (error) {
-    console.error(error)
+    console.error("Failed to expose API:", error);
   }
 } else {
-  // @ts-ignore (define in dts)
-  window.electron = electronAPI
-  // @ts-ignore (define in dts)
-  window.api = api
+  window.applicationApi = applicationApi;
 }
