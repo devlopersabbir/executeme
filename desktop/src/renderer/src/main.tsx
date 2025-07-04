@@ -16,9 +16,7 @@ loader.config({
   }
 });
 
-// Your existing getWorkerUrl configuration
-// This part is correct for defining *worker* URLs, but the loader.config
-// is for the *main* Monaco scripts.
+// This part is for the workers, which you already had mostly correct
 window.MonacoEnvironment = {
   getWorkerUrl: (_moduleId, label) => {
     const workerFilenameMap: { [key: string]: string } = {
@@ -36,7 +34,6 @@ window.MonacoEnvironment = {
     return `monaco-editor://${workerFile}`;
   }
 };
-
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <BaseProvider>
