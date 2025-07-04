@@ -1,6 +1,7 @@
 {
-  "name": "websites",
-  "version": "0.1.0",
+  "name": "executeme-web",
+  "description": "Executeme online web based compiler",
+  "version": "0.0.3",
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",

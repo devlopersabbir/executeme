@@ -1,0 +1,23 @@
+on:
+  push:
+    tags:
+      - "v*"
+name: Create Release
+
+jobs:
+  build:
+    name: Create Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Create Release for Tag
+        id: release_tag
+        uses: actions/create-release@v1
+        env:
+          RELEASE_NOTE_WRITE: ${{ secrets.RELEASE_NOTE_WRITE }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: ${{ github.ref }}
+          body: |
+            Please refer to [changelog.md](https://github.com/devlopersabbir/executeme/blob/${{ github.ref_name }}/changelog.md) for details
