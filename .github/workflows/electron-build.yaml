@@ -25,20 +25,25 @@ jobs:
 
       - name: Install Dependencies
         run: npm install
+        working-directory: desktop
 
       - name: build-linux
         if: matrix.os == 'ubuntu-latest'
         run: npm run build:linux
+        working-directory: desktop
 
       - name: build-mac
         if: matrix.os == 'macos-latest'
         run: npm run build:mac
+        working-directory: desktop
 
       - name: build-win
         if: matrix.os == 'windows-latest'
         run: npm run build:win
+        working-directory: desktop
 
       - name: release
+        if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v1
         with:
           draft: true
