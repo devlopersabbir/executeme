@@ -24,3 +24,10 @@
 - [feat] Nginx setup for getting free ssl on our server
 - [feat] deployment github action to automate the vps deploy
 - [chore] Incress the memory uses for only **Kotlin** language support
+
+## v0.0.3 Releases 🎉
+
+- [init] Initialize desktop applicaiton using `electronjs`
+- [chore] Created executeme platform logo for free
+- [feat] Created a release notes ci/cd pipeline to automate our release version
+- [feat] Create electron builder CI for build various platform applicaiton
