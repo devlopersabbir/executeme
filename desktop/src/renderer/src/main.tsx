@@ -5,18 +5,14 @@ import "./assets/main.css";
 import BaseProvider from "./components/shared/providers/base-provider";
 import { loader } from "@monaco-editor/react";
 
-// Get the base path for Monaco from the preload script
-// @ts-ignore
-const monacoBasePath = window.monacoConfig.getMonacoBasePath();
+const monacoBasePath = window.applicationApi.api.getMonacoBasePath();
 
-// Configure the monaco-editor/react loader to use your custom protocol
 loader.config({
   paths: {
     vs: monacoBasePath
   }
 });
 
-// This part is for the workers, which you already had mostly correct
 window.MonacoEnvironment = {
   getWorkerUrl: (_moduleId, label) => {
     const workerFilenameMap: { [key: string]: string } = {

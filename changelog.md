@@ -34,3 +34,5 @@
 - [feat] ShadcnUI added to our desktop application
 - [feat] Monaco editor setup with electron js
 - [feat] Code highlight & inte. is supported
+- [fix] electron main process api calling issues
+- [feat] api calling bridge for secure our application

@@ -10,7 +10,6 @@ import LanguageSelection from "./editor-view/language-selection";
 import { Button } from "@renderer/components/ui/button";
 import { ExecutionResult, Language } from "@renderer/@types";
 import { useState, useTransition } from "react";
-import { executeCodeAction } from "../_actions/execute";
 import { CodeEditor } from "./editor-view/code-editor";
 import ResultSection from "./output-view/result-sections";
 
@@ -33,7 +32,7 @@ export default function CodeInput() {
         language: selectedLanguage
       });
 
-      const result = await executeCodeAction({
+      const result = await window.applicationApi.api.executeCode({
         language: selectedLanguage,
         code
       });
