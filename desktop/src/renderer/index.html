@@ -6,7 +6,15 @@
     <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
     <meta
       http-equiv="Content-Security-Policy"
-      content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:"
+      content="
+  default-src 'self' 'unsafe-inline';
+  script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net;
+  style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net;
+  img-src 'self' data:;
+  font-src 'self' https://cdn.jsdelivr.net https://fonts.gstatic.com;
+  connect-src 'self' wss://145.223.97.55:9292 https://145.223.97.55:9292;
+  worker-src 'self' blob: monaco-editor:;
+"
     />
   </head>
 

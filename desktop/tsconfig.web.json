@@ -10,10 +10,10 @@
     "composite": true,
     "jsx": "react-jsx",
     "baseUrl": ".",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
     "paths": {
-      "@renderer/*": [
-        "src/renderer/src/*"
-      ]
+      "@renderer/*": ["src/renderer/src/*"]
     }
   }
 }
