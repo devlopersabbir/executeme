@@ -1,8 +1,5 @@
 import { contextBridge, ipcRenderer } from "electron";
 
-// Custom APIs for renderer
-const api = {};
-
 // Expose a function to the renderer to get Monaco's base path
 // This is crucial for @monaco-editor/react to know where to load its *main* scripts from
 contextBridge.exposeInMainWorld("monacoConfig", {

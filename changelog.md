@@ -32,3 +32,5 @@
 - [feat] Created a release notes ci/cd pipeline to automate our release version
 - [feat] Create electron builder CI for build various platform applicaiton
 - [feat] ShadcnUI added to our desktop application
+- [feat] Monaco editor setup with electron js
+- [feat] Code highlight & inte. is supported
