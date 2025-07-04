@@ -6,6 +6,11 @@ import icon from '../../resources/icon.png?asset'
 function createWindow(): void {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
+    title: 'Execute Me - Code execution Platform',
+    darkTheme: true,
+    center: true,
+    hasShadow: true,
+    resizable: true,
     width: 900,
     height: 670,
     show: false,

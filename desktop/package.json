@@ -3,7 +3,12 @@
   "version": "0.0.1",
   "description": "Executeme is a cross platoform program compiler",
   "main": "./out/main/index.js",
-  "author": "https://devlopersabbir.github.io",
+  "author": {
+    "email": "devlopersabbir@gmail.com",
+    "name": "Sabbir Hossain Shuvo",
+    "url": "https://devlopersabbir.github.io"
+  },
+  "publisher": "Sabbir Hossain Shuvo",
   "homepage": "https://executeme.vercel.app",
   "scripts": {
     "format": "prettier --write .",
