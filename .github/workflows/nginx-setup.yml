@@ -1,0 +1,92 @@
+name: 🚀 Deploy NGINX HTTPS Reverse Proxy 🔐
+
+on:
+  workflow_run:
+    workflows: ["Deployment VPS"]
+    types:
+      - completed
+
+jobs:
+  deploy:
+    if: ${{ github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'main' }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v3
+
+      - name: 🔧 Setup and load environment
+        uses: ./.github/actions/setup-and-load-env
+        with:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          PACKAGE_NAME: ${{ secrets.PACKAGE_NAME }}
+          PACKAGE_VERSION: ${{ secrets.PACKAGE_VERSION }}
+          EMAIL: ${{ secrets.EMAIL }}
+          BASE_URL: ${{ secrets.BASE_URL }}
+          PORT: ${{ secrets.PORT }}
+          IMAGE_TAG: ${{ secrets.IMAGE_TAG }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+          GIT_TOKEN: ${{ secrets.EXECUTE_ME_GITHUB_TOKEN }}
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+          VPS_SSH_PRIVATE_KEY: ${{ secrets.VPS_SSH_PRIVATE_KEY }}
+
+      - name: 📋 Verify environment variables
+        run: |
+          echo "Package name: $PACKAGE_NAME"
+          echo "Package version: $PACKAGE_VERSION"
+          echo "Docker image: $IMAGE_TAG"
+          echo "✅ Environment variables are accessible"
+
+      - name: 🔐 Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          echo "${{secrets.VPS_SSH_PRIVATE_KEY}}" | tr -d '\r' > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H ${{secrets.VPS_HOST}} >> ~/.ssh/known_hosts
+
+          cat > ~/.ssh/config << EOF
+          Host deploy-server
+            HostName ${{secrets.VPS_HOST}}
+            User ${{secrets.VPS_USER}}
+            IdentityFile ~/.ssh/deploy_key
+            StrictHostKeyChecking no
+          EOF
+          chmod 600 ~/.ssh/config
+
+      - name: 🚀 Test SSH Connection
+        run: ssh deploy-server "echo '✅ SSH connection successful'"
+
+      - name: 📁 Debug scripts directory
+        run: ls -al ./scripts
+
+      - name: 🧪 Run NGINX Setup Script on VPS
+        run: |
+          echo "🚀 Preparing to run setup-nginx.sh on VPS"
+
+          ssh deploy-server "bash -s" <<EOF
+            set -e
+            cd ~/${{secrets.PACKAGE_NAME}}
+
+            for file in scripts/generate-self-signed-cert.sh scripts/setup-nginx.sh; do
+              if [ ! -f "$file" ]; then
+                echo "❌ $file not found. Will copy from runner."
+                exit 10
+              else
+                echo "✅ $(basename "$file") found on VPS"
+              fi
+            done
+          EOF
+
+          # Check exit code; if 10, then copy scripts directory
+          if [ $? -eq 10 ]; then
+            echo "📤 Copying scripts directory to VPS..."
+            scp -r ./scripts deploy-server:~/${{secrets.PACKAGE_NAME}}/
+          fi
+
+          echo "🔐 Generate CERT"
+          ssh deploy-server "cd ~/${{secrets.PACKAGE_NAME}}/scripts && chmod +x generate-self-signed-cert.sh && ./generate-self-signed-cert.sh"
+
+          echo "🚀 Running setup-nginx.sh on VPS..."
+          ssh deploy-server "cd ~/${{secrets.PACKAGE_NAME}}/scripts && chmod +x setup-nginx.sh && ./setup-nginx.sh"
