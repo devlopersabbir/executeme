@@ -1,10 +1,10 @@
-name: Build/release Electron app
+name: 🚧 Build/🚀 Release Electron App
 
 on:
   push:
     branches: ["main"]
     tags:
-      - v*.*.*
+      - v*.*.* # 🔖 Only run on version tags like v0.0.2
 
 jobs:
   release:
@@ -15,37 +15,55 @@ jobs:
         os: [ubuntu-latest, macos-latest, windows-latest]
 
     steps:
-      - name: Check out Git repository
+      - name: 🔄 Check out Git repository
         uses: actions/checkout@v3
 
-      - name: Install Node.js
+      - name: 📦 Install Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 20
 
-      - name: Install Dependencies
+      - name: 📥 Install Dependencies
         run: npm install
         working-directory: desktop
 
-      - name: build-linux
+      # 🐧 Linux Build
+      - name: 🐧 Build for Linux
         if: matrix.os == 'ubuntu-latest'
         run: npm run build:linux
         working-directory: desktop
 
-      - name: build-mac
+      # 🍎 macOS Build
+      - name: 🍎 Build for macOS
         if: matrix.os == 'macos-latest'
         run: npm run build:mac
         working-directory: desktop
 
-      - name: build-win
+      # 🪟 Windows Build
+      - name: 🪟 Build for Windows
         if: matrix.os == 'windows-latest'
         run: npm run build:win
         working-directory: desktop
 
-      - name: release
+      # 📜 Extract changelog for the current version tag
+      - name: 📝 Extract changelog for current tag
+        id: extract_changelog
+        run: |
+          TAG_NAME=${{ github.ref_name }}
+          awk "/## ${TAG_NAME}/,/^## v[0-9]+\.[0-9]+\.[0-9]+/" changelog.md | sed '$d' > changelog.txt
+        shell: bash
+
+      - name: 👀 Show extracted changelog
+        run: cat changelog.txt
+
+      # 🚀 Publish GitHub Release with Assets and Changelog
+      - name: 🚀 Publish GitHub Release
         uses: softprops/action-gh-release@v1
+        if: github.ref_type == 'tag'
         with:
-          draft: true
+          body_path: changelog.txt
+          repository: devlopersabbir/executeme
+          token: ${{ secrets.EXECUTE_ME_GITHUB_TOKEN }}
           files: |
             desktop/dist/*.exe
             desktop/dist/*.zip
@@ -58,4 +76,4 @@ jobs:
             desktop/dist/*.yml
             desktop/dist/*.blockmap
         env:
-          GITHUB_TOKEN: ${{ secrets.RELEASE_NOTE_WRITE }}
+          GITHUB_TOKEN: ${{ secrets.EXECUTE_ME_GITHUB_TOKEN }}
