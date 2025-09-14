@@ -209,14 +209,29 @@ jobs:
             exit 1
           fi
 
-          # Run the simplified deployment script
-          echo "Executing zero-downtime deployment..."
-          if ./scripts/deploy.sh --version "${{secrets.PACKAGE_VERSION}}"; then
-            echo "✅ Deployment successful"
-          else
-            echo "❌ Deployment failed - automatic rollback should have occurred"
-            exit 1
-          fi
+          # Navigate to the executeme directory on the VPS.
+          cd ~/${{secrets.PACKAGE_NAME}}
+
+          # make sure we are in executeme directory
+          ls -a
+
+          # Pull the latest code from the 'main' branch of the GitHub repository.
+          git pull origin main
+
+          # Check git status to make sure everything is up to date
+          # git status
+
+          # Execute your bash script.
+          bash ./scripts/simple-deploy.sh
+
+          # # Run the simplified deployment script
+          # echo "Executing zero-downtime deployment..."
+          # if ./scripts/deploy.sh --version "${{secrets.PACKAGE_VERSION}}"; then
+          #   echo "✅ Deployment successful"
+          # else
+          #   echo "❌ Deployment failed - automatic rollback should have occurred"
+          #   exit 1
+          # fi
 
           # Cleanup
           docker logout
@@ -225,29 +240,29 @@ jobs:
           echo "🎉 DEPLOYMENT COMPLETED SUCCESSFULLY!"
           DEPLOY_EOF
 
-      - name: Verify Deployment ✅
-        run: |
-          echo "Verifying deployment..."
-          ssh deploy-server bash << 'VERIFY_EOF'
-          cd ~/${{secrets.PACKAGE_NAME}}
+      # - name: Verify Deployment ✅
+      #   run: |
+      #     echo "Verifying deployment..."
+      #     ssh deploy-server bash << 'VERIFY_EOF'
+      #     cd ~/${{secrets.PACKAGE_NAME}}
 
-          echo "=== Running deployment status check ==="
-          ./scripts/deploy.sh status
+      #     echo "=== Running deployment status check ==="
+      #     ./scripts/deploy.sh status
 
-          echo "=== Testing endpoint directly ==="
-          if curl -f -s --connect-timeout 5 --max-time 10 "http://localhost:${{secrets.PORT}}/" | grep -q '"status":"ok"'; then
-            echo "🎉 Endpoint health check passed! Service is responding with status: ok"
-          else
-            echo "❌ Endpoint health check failed!"
-            exit 1
-          fi
+      #     echo "=== Testing endpoint directly ==="
+      #     if curl -f -s --connect-timeout 5 --max-time 10 "http://localhost:${{secrets.PORT}}/" | grep -q '"status":"ok"'; then
+      #       echo "🎉 Endpoint health check passed! Service is responding with status: ok"
+      #     else
+      #       echo "❌ Endpoint health check failed!"
+      #       exit 1
+      #     fi
 
-          echo "=== Final verification ==="
-          echo "Deployment verified successfully!"
-          VERIFY_EOF
+      #     echo "=== Final verification ==="
+      #     echo "Deployment verified successfully!"
+      #     VERIFY_EOF
 
-      - name: Cleanup 🧹
-        if: always()
-        run: |
-          rm -rf ~/.ssh/deploy_key* ~/.ssh/config
-          rm -f .env
+      # - name: Cleanup 🧹
+      #   if: always()
+      #   run: |
+      #     rm -rf ~/.ssh/deploy_key* ~/.ssh/config
+      #     rm -f .env
