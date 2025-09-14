@@ -1,35 +1,48 @@
 services:
   nodejs-image:
+    profile:
+      - prod
     build:
       context: .
       dockerfile: docker/Dockerfile.nodejs
     image: executor-nodejs:latest
 
   deno-image:
+    profile:
+      - prod
     build:
       context: .
       dockerfile: docker/Dockerfile.deno
     image: executor-deno:latest
 
   python-image:
+    profile:
+      - prod
     build:
       context: .
       dockerfile: docker/Dockerfile.python
     image: executor-python:latest
 
   java-image:
+    profile:
+      - prod
     build:
       context: .
       dockerfile: docker/Dockerfile.jvm
     image: executor-java:latest
 
   kotlin-image:
+    profile:
+      - prod
     build:
       context: .
       dockerfile: docker/Dockerfile.kotlin
     image: executor-kotlin:latest
 
   nodejs-server-image:
+    profile:
+      - prod
+      - dev
     build:
       context: .
       dockerfile: Dockerfile
@@ -47,6 +60,8 @@ services:
     restart: unless-stopped
 
   executeme-nginx:
+    profile:
+      - prod
     image: nginx:alpine
     ports:
       - "9292:9292"

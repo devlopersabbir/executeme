@@ -30,6 +30,12 @@ importers:
       dotenv:
         specifier: ^16.6.0
         version: 16.6.0
+      dotenv-expand:
+        specifier: ^12.0.3
+        version: 12.0.3
+      node:
+        specifier: ^24.8.0
+        version: 24.8.0
       nodemon:
         specifier: ^3.1.10
         version: 3.1.10
@@ -470,6 +476,10 @@ packages:
     resolution: {integrity: sha512-g7nH6P6dyDioJogAAGprGpCtVImJhpPk/roCzdb3fIh61/s/nPsfR6onyMwkCAR/OlC3yBC0lESvUoQEAssIrw==}
     engines: {node: '>= 0.8'}
 
+  dotenv-expand@12.0.3:
+    resolution: {integrity: sha512-uc47g4b+4k/M/SeaW1y4OApx+mtLWl92l5LMPP0GNXctZqELk+YGgOPIIC5elYmUH4OuoK3JLhuRUYegeySiFA==}
+    engines: {node: '>=12'}
+
   dotenv@16.6.0:
     resolution: {integrity: sha512-Omf1L8paOy2VJhILjyhrhqwLIdstqm1BvcDPKg4NGAlkwEu9ODyrFbvk8UymUOMCT+HXo31jg1lArIrVAAhuGA==}
     engines: {node: '>=12'}
@@ -715,9 +725,17 @@ packages:
     resolution: {integrity: sha512-8Ofs/AUQh8MaEcrlq5xOX0CQ9ypTF5dl78mjlMNfOK08fzpgTHQRQPBxcPlEtIw0yRpws+Zo/3r+5WRby7u3Gg==}
     engines: {node: '>= 0.6'}
 
+  node-bin-setup@1.1.4:
+    resolution: {integrity: sha512-vWNHOne0ZUavArqPP5LJta50+S8R261Fr5SvGul37HbEDcowvLjwdvd0ZeSr0r2lTSrPxl6okq9QUw8BFGiAxA==}
+
   node-cache@5.1.2:
     resolution: {integrity: sha512-t1QzWwnk4sjLWaQAS8CHgOJ+RAfmHpxFWmc36IWTiWHQfs0w5JDMBS1b1ZxQteo0vVVuWJvIUKHDkkeK7vIGCg==}
     engines: {node: '>= 8.0.0'}
+
+  node@24.8.0:
+    resolution: {integrity: sha512-96VUgFV6DNxMQwi/V/mwSFLUDId93eHJQIA4XNZ3PTGHdek7EeY1bAHEUX51hpBcA5YT9kU7Yn6LP+6TmsMtlw==}
+    engines: {npm: '>=5.0.0'}
+    hasBin: true
 
   nodemon@3.1.10:
     resolution: {integrity: sha512-WDjw3pJ0/0jMFmyNDp3gvY2YizjLmmOUQo6DEBY+JgdvW/yQ9mEeSw6H5ythl5Ny2ytb7f9C2nIbjSxMNzbJXw==}
@@ -1385,6 +1403,10 @@ snapshots:
 
   depd@2.0.0: {}
 
+  dotenv-expand@12.0.3:
+    dependencies:
+      dotenv: 16.6.0
+
   dotenv@16.6.0: {}
 
   dunder-proto@1.0.1:
@@ -1662,9 +1684,15 @@ snapshots:
 
   negotiator@1.0.0: {}
 
+  node-bin-setup@1.1.4: {}
+
   node-cache@5.1.2:
     dependencies:
       clone: 2.1.2
+
+  node@24.8.0:
+    dependencies:
+      node-bin-setup: 1.1.4
 
   nodemon@3.1.10:
     dependencies:

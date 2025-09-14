@@ -18,7 +18,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20" # Or your preferred Node.js version
+          node-version: "20"
 
       - name: Install Node.js dependencies
         run: npm install
@@ -27,20 +27,4 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - name: Build Docker images
-        # This builds all services defined in your docker-compose.yaml
-        # It's crucial to build them before running tests.
         run: docker compose build
-
-      - name: Run Vitest Battle Tests
-        run: echo "this will handle letter"
-        # # 1. Start all Docker Compose services (including your Node.js server and language executors).
-        # # 2. Run the Vitest tests, which will make HTTP requests to your Node.js server.
-        # # 3. The tests will internally use `docker run --rm` against your language executor images.
-        # # 4. After tests complete, the `afterAll` hook in your tests will tear down Docker Compose.
-        # env:
-        #   # Pass HOST_PROJECT_ROOT to your Node.js server if it needs it during tests.
-        #   # In GitHub Actions, GITHUB_WORKSPACE is the root of your checked-out repo.
-        #   HOST_PROJECT_ROOT: ${{ github.workspace }}
-        #   # Ensure your Node.js server uses the correct port for testing
-        #   PORT: 9091
-        # run: npm test

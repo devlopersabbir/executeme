@@ -147,6 +147,7 @@ app.post("/run", async (req, res) => {
 app.get(["/", "/index", "/index.html"], (_, res) => {
   res.sendFile(path.join(process.cwd(), "./", "views", "index.html"));
 });
+
 app.use((req, res) => {
   res.status(404);
   if (req.accepts("html")) {
@@ -157,11 +158,13 @@ app.use((req, res) => {
     res.type("txt").send("404 not found");
   }
 });
+
 function emitActiveCoder() {
   const activeUsers = cache.get("active_coders");
   io.emit("active_coders", activeUsers);
 }
-const PORT = process.env.PORT || 9091;
-server.listen(PORT, () => {
+
+const PORT = process.env.PORT || 6000;
+server.listen(Number(PORT), () => {
   console.log(`Code executor backend listening on port ${PORT}`);
 });

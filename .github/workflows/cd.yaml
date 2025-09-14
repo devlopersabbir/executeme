@@ -1,0 +1,253 @@
+name: Deployment VPS
+
+on:
+  push:
+    branches: ["main"]
+
+jobs:
+  build-and-push:
+    name: Build & Push Docker Image 🏗️
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code 📥
+        uses: actions/checkout@v4
+
+      - name: Set up NodeJs
+        uses: actions/setup-node@v3
+        with:
+          node-version: "20"
+
+      - name: 🔧 Setup and load environment
+        uses: ./.github/actions/setup-and-load-env
+        with:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          PACKAGE_NAME: ${{ secrets.PACKAGE_NAME }}
+          PACKAGE_VERSION: ${{ secrets.PACKAGE_VERSION }}
+          EMAIL: ${{ secrets.EMAIL }}
+
+          BASE_URL: ${{ secrets.BASE_URL }}
+          PORT: ${{ secrets.PORT }}
+
+          IMAGE_TAG: ${{ secrets.IMAGE_TAG }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+          VPS_SSH_PRIVATE_KEY: ${{ secrets.VPS_SSH_PRIVATE_KEY }}
+
+      - name: 📋 Verify environment variables
+        run: |
+          echo "Package name: $PACKAGE_NAME"
+          echo "Package version: $PACKAGE_VERSION"
+          echo "Docker image: $IMAGE_TAG"
+          echo "✅ Environment variables are accessible"
+
+      - name: Log in to Docker Hub 🔑
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        run: |
+          echo "🔑 Logging into Docker Hub..."
+          echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+          echo "✅ Successfully logged into Docker Hub"
+
+      - name: Build Docker Image 🔨
+        run: |
+          echo "Building Docker image: $IMAGE_TAG"
+          docker compose --profile prod build
+          if [ $? -eq 0 ]; then
+            echo "✅ Docker image built successfully"
+          else
+            echo "❌ Failed to build Docker image"
+            exit 1
+          fi
+
+      - name: Push Docker Image 🚀
+        run: |
+          echo "Pushing Docker image: $IMAGE_TAG"
+          docker compose --profile prod push
+          if [ $? -eq 0 ]; then
+            echo "✅ Docker image $IMAGE_TAG pushed successfully!"
+          else
+            echo "❌ Failed to push Docker image"
+            exit 1
+          fi
+
+  deploy:
+    name: Deploy to VPS with Zero Downtime 🔄
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    if: ${{ success() && needs.build-and-push.result == 'success' }}
+
+    steps:
+      - name: Checkout Code 📥
+        uses: actions/checkout@v4
+
+      - name: 🔧 Setup and load environment
+        uses: ./.github/actions/setup-and-load-env
+        with:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          PACKAGE_NAME: ${{ secrets.PACKAGE_NAME }}
+          PACKAGE_VERSION: ${{ secrets.PACKAGE_VERSION }}
+          EMAIL: ${{ secrets.EMAIL }}
+
+          BASE_URL: ${{ secrets.BASE_URL }}
+          PORT: ${{ secrets.PORT }}
+
+          IMAGE_TAG: ${{ secrets.IMAGE_TAG }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+          VPS_SSH_PRIVATE_KEY: ${{ secrets.VPS_SSH_PRIVATE_KEY }}
+
+      - name: 📋 Verify environment variables
+        run: |
+          echo "Package name: $PACKAGE_NAME"
+          echo "Package version: $PACKAGE_VERSION"
+          echo "Docker image: $IMAGE_TAG"
+          echo "✅ Environment variables are accessible"
+
+      - name: Verify Build Outputs 🔍
+        run: |
+          echo "🔍 Verifying build job outputs..."
+          echo "=== BUILD JOB OUTPUTS ==="
+          echo "package_name: '$PACKAGE_NAME'"
+          echo "package_version: '$PACKAGE_VERSION'"
+          echo "image_tag: '$IMAGE_TAG'"
+          if [ -z "$PACKAGE_TAG" ]; then
+            echo "⚠️ IMAGE_TAG is empty, using hardcoded fallback in deployment"
+          else
+            echo "✅ IMAGE_TAG is set to '$PACKAGE_TAG'"
+          fi
+          echo "========================="
+
+      - name: Setup SSH 🔐
+        run: |
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+
+          echo "${{secrets.VPS_SSH_PRIVATE_KEY}}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+
+          ssh-keyscan -H $VPS_HOST >> ~/.ssh/known_hosts
+          chmod 644 ~/.ssh/known_hosts
+
+          cat <<EOF > ~/.ssh/config
+          Host deploy-server
+            HostName $VPS_HOST
+            User $VPS_USER
+            IdentityFile ~/.ssh/deploy_key
+            StrictHostKeyChecking no
+          EOF
+          chmod 600 ~/.ssh/config
+
+      - name: Debug SSH key
+        run: |
+          echo "-----BEGIN KEY-----"
+          head -n 10 ~/.ssh/deploy_key
+          echo "-----END KEY-----"
+
+      - name: Copy Files to Server 📦
+        run: |
+          echo "Creating directories..."
+          chmod 600 ~/.ssh/deploy_key
+          ssh deploy-server "mkdir -p ~/$PACKAGE_NAME/scripts"
+          echo "Copying files..."
+
+          scp -i ~/.ssh/deploy_key docker-compose.yaml $VPS_USER@$VPS_HOST:~/$PACKAGE_NAME/
+          scp -i ~/.ssh/deploy_key .env  $VPS_USER@$VPS_HOST:~/$PACKAGE_NAME/
+          scp -i ~/.ssh/deploy_key -r docker $VPS_USER@$VPS_HOST:~/$PACKAGE_NAME/
+          scp -i ~/.ssh/deploy_key -r scripts $VPS_USER@$VPS_HOST:~/$PACKAGE_NAME/
+
+          echo "✅ Files copied successfully"
+
+      - name: Fix permissions on server 🌋
+        run: |
+          ssh deploy-server "chmod -R +x ~/$PACKAGE_NAME/scripts/*.sh"
+
+      - name: Deploy Application 🚀
+        run: |
+          echo "Starting deployment..."
+          echo "Package: ${{secrets.PACKAGE_NAME}}"
+          echo "Version: ${{secrets.PACKAGE_VERSION}}"
+          echo "Image Tag: ${{secrets.IMAGE_TAG}}"
+          cat .env  # Debug: show .env contents
+
+          chmod 600 ~/.ssh/deploy_key
+
+          ssh deploy-server bash << 'DEPLOY_EOF'
+          set -e
+
+          echo "=== DEPLOYMENT STARTED ==="
+          echo "Package:  ${{secrets.PACKAGE_NAME}}"
+          echo "Version:  ${{secrets.PACKAGE_NAME}}"
+          echo "=============================="
+
+          cd ~/${{secrets.PACKAGE_NAME}}
+
+          # Install Docker Compose if needed
+          if [ ! -f ~/.docker/cli-plugins/docker-compose ]; then
+            echo "Installing Docker Compose..."
+            mkdir -p ~/.docker/cli-plugins/
+            curl -SL https://github.com/docker/compose/releases/latest/download/docker-compose-linux-x86_64 -o ~/.docker/cli-plugins/docker-compose
+            chmod +x ~/.docker/cli-plugins/docker-compose
+          fi
+
+          # Login to Docker Hub
+          echo "Logging into Docker Hub..."
+          echo "${{secrets.DOCKER_PASSWORD}}" | docker login -u "${{secrets.DOCKER_USERNAME}}" --password-stdin
+
+          # Source environment variables
+          if [ -f .env ]; then
+            echo "Sourcing .env file..."
+            cat .env  # Debug: show .env contents on server
+            source .env
+          else
+            echo "❌ .env file not found"
+            exit 1
+          fi
+
+          # Run the simplified deployment script
+          echo "Executing zero-downtime deployment..."
+          if ./scripts/deploy.sh --version "${{secrets.PACKAGE_VERSION}}"; then
+            echo "✅ Deployment successful"
+          else
+            echo "❌ Deployment failed - automatic rollback should have occurred"
+            exit 1
+          fi
+
+          # Cleanup
+          docker logout
+          docker image prune -f
+
+          echo "🎉 DEPLOYMENT COMPLETED SUCCESSFULLY!"
+          DEPLOY_EOF
+
+      - name: Verify Deployment ✅
+        run: |
+          echo "Verifying deployment..."
+          ssh deploy-server bash << 'VERIFY_EOF'
+          cd ~/${{secrets.PACKAGE_NAME}}
+
+          echo "=== Running deployment status check ==="
+          ./scripts/deploy.sh status
+
+          echo "=== Testing endpoint directly ==="
+          if curl -f -s --connect-timeout 5 --max-time 10 "http://localhost:${{secrets.PORT}}/" | grep -q '"status":"ok"'; then
+            echo "🎉 Endpoint health check passed! Service is responding with status: ok"
+          else
+            echo "❌ Endpoint health check failed!"
+            exit 1
+          fi
+
+          echo "=== Final verification ==="
+          echo "Deployment verified successfully!"
+          VERIFY_EOF
+
+      - name: Cleanup 🧹
+        if: always()
+        run: |
+          rm -rf ~/.ssh/deploy_key* ~/.ssh/config
+          rm -f .env

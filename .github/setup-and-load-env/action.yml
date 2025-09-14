@@ -1,0 +1,141 @@
+name: "Setup and Load Environment"
+description: "Generates .env from inputs and exports to GITHUB_ENV"
+
+inputs:
+  DOCKER_USERNAME:
+    description: "Docker username"
+    required: true
+  PACKAGE_NAME:
+    description: "Package name"
+    required: true
+  PACKAGE_VERSION:
+    description: "Package version"
+    required: true
+  EMAIL:
+    description: "Email"
+    required: true
+  PORT:
+    description: "Port"
+    required: true
+  IMAGE_TAG:
+    description: "Image tag"
+    required: true
+  DOCKER_PASSWORD:
+    description: "Docker password"
+    required: true
+  VPS_HOST:
+    description: "VPS host"
+    required: true
+  VPS_USER:
+    description: "VPS user"
+    required: true
+  VPS_SSH_PRIVATE_KEY:
+    description: "VPS SSH private key"
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: 🔧 Generate .env file
+      shell: bash
+      run: |
+        ENV_FILE="$GITHUB_WORKSPACE/.env"
+        echo "🔧 Creating .env file at $ENV_FILE..."
+
+        # Create the .env file with all variables
+        cat <<'EOF' > "$ENV_FILE"
+        DOCKER_USERNAME=${{ inputs.DOCKER_USERNAME }}
+        PACKAGE_NAME=${{ inputs.PACKAGE_NAME }}
+        PACKAGE_VERSION=${{ inputs.PACKAGE_VERSION }}
+        EMAIL=${{ inputs.EMAIL }}
+
+        NODE_ENV=development
+
+        BASE_URL=${{ inputs.BASE_URL }}
+
+        PORT=${{ inputs.PORT }}
+
+        IMAGE_TAG=${{ inputs.IMAGE_TAG }}
+        DOCKER_PASSWORD=${{ inputs.DOCKER_PASSWORD }}
+
+        VPS_HOST=${{ inputs.VPS_HOST }}
+        VPS_USER=${{ inputs.VPS_USER }}
+        EOF
+
+        # Handle SSH private key separately (write to file for Docker usage)
+        echo '${{ inputs.VPS_SSH_PRIVATE_KEY }}' > "$GITHUB_WORKSPACE/deploy_key.pem"
+        chmod 600 "$GITHUB_WORKSPACE/deploy_key.pem"
+        echo "VPS_SSH_PRIVATE_KEY_FILE=$GITHUB_WORKSPACE/deploy_key.pem" >> "$ENV_FILE"
+
+        # Verify file creation
+        if [ -f "$ENV_FILE" ] && [ -s "$ENV_FILE" ]; then
+          FILE_SIZE=$(wc -c < "$ENV_FILE")
+          echo "✅ .env file created successfully (size: ${FILE_SIZE} bytes)"
+          echo "📁 Location: $ENV_FILE"
+          echo "🔑 SSH key written to: ssh_key.pem"
+        else
+          echo "❌ Error: .env file creation failed"
+          exit 1
+        fi
+
+    - name: 📤 Export variables to GITHUB_ENV (simple method)
+      shell: bash
+      env:
+        DOCKER_USERNAME: ${{ inputs.DOCKER_USERNAME }}
+        PACKAGE_NAME: ${{ inputs.PACKAGE_NAME }}
+        PACKAGE_VERSION: ${{ inputs.PACKAGE_VERSION }}
+        EMAIL: ${{ inputs.EMAIL }}
+
+        BASE_URL: ${{ inputs.BASE_URL }}
+        PORT: ${{ inputs.PORT }}
+
+        IMAGE_TAG: ${{ inputs.IMAGE_TAG }}
+        DOCKER_PASSWORD: ${{ inputs.DOCKER_PASSWORD }}
+
+        VPS_HOST: ${{ inputs.VPS_HOST }}
+        VPS_USER: ${{ inputs.VPS_USER }}
+      run: |
+        echo "📤 Exporting environment variables to GITHUB_ENV using env method..."
+
+        echo "PACKAGE_NAME=$PACKAGE_NAME" >> $GITHUB_ENV
+        echo "PACKAGE_VERSION=$PACKAGE_VERSION" >> $GITHUB_ENV
+        echo "DOCKER_USERNAME=$DOCKER_USERNAME" >> $GITHUB_ENV
+        echo "EMAIL=$EMAIL" >> $GITHUB_ENV
+        echo "NODE_ENV=development" >> $GITHUB_ENV
+
+
+        echo "BASE_URL=$BASE_URL" >> $GITHUB_ENV
+        echo "PORT=$PORT" >> $GITHUB_ENV
+
+        echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
+        echo "DOCKER_PASSWORD=$DOCKER_PASSWORD" >> $GITHUB_ENV
+
+        echo "VPS_HOST=$VPS_HOST" >> $GITHUB_ENV
+        echo "VPS_USER=$VPS_USER" >> $GITHUB_ENV
+
+        echo "✅ All environment variables exported successfully"
+
+    - name: 🔍 Verify setup
+      shell: bash
+      run: |
+        ENV_FILE="$GITHUB_WORKSPACE/.env"
+
+        if [ -f "$ENV_FILE" ]; then
+          VAR_COUNT=$(grep -c '^[A-Z]' "$ENV_FILE" 2>/dev/null || echo "0")
+          FILE_SIZE=$(wc -c < "$ENV_FILE")
+          echo "🎉 Environment setup complete!"
+          echo "📁 .env file: $ENV_FILE"
+          echo "🔢 Variables count: $VAR_COUNT"
+          echo "📊 File size: ${FILE_SIZE} bytes"
+          echo "✅ Ready to use in subsequent steps"
+          
+          # Test a few key variables to ensure they're available
+          echo "🧪 Testing variable availability:"
+          echo "   PACKAGE_NAME: ${PACKAGE_NAME:-'NOT_SET'}"
+          echo "   PACKAGE_VERSION: ${PACKAGE_VERSION:-'NOT_SET'}"
+          echo "   DOCKER_USERNAME: ${DOCKER_USERNAME:-'NOT_SET'}"
+          echo "   SSH Key file: ${VPS_SSH_PRIVATE_KEY_FILE:-'NOT_SET'}"
+        else
+          echo "❌ Error: .env file missing after generation"
+          exit 1
+        fi
