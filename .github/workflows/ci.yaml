@@ -12,16 +12,38 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout Code 📥
         uses: actions/checkout@v4
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
+      - name: Set up NodeJs
+        uses: actions/setup-node@v3
         with:
           node-version: "20"
 
-      - name: Install Node.js dependencies
-        run: npm install
+      - name: 🔧 Setup and load environment
+        uses: ./.github/actions/setup-and-load-env
+        with:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          PACKAGE_NAME: ${{ secrets.PACKAGE_NAME }}
+          PACKAGE_VERSION: ${{ secrets.PACKAGE_VERSION }}
+          EMAIL: ${{ secrets.EMAIL }}
+
+          BASE_URL: ${{ secrets.BASE_URL }}
+          PORT: ${{ secrets.PORT }}
+
+          IMAGE_TAG: ${{ secrets.IMAGE_TAG }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+          VPS_SSH_PRIVATE_KEY: ${{ secrets.VPS_SSH_PRIVATE_KEY }}
+
+      - name: 📋 Verify environment variables
+        run: |
+          echo "Package name: $PACKAGE_NAME"
+          echo "Package version: $PACKAGE_VERSION"
+          echo "Docker image: $IMAGE_TAG"
+          echo "✅ Environment variables are accessible"
 
       - name: Set up Docker BuildX (for multi-platform builds, good practice)
         uses: docker/setup-buildx-action@v3
