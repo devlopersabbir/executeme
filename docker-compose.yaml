@@ -1,6 +1,112 @@
 services:
+  app:
+    profiles:
+      - prod
+      - dev
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: ${DOCKER_USERNAME}/${PACKAGE_NAME}:${PACKAGE_VERSION}
+    container_name: ${PACKAGE_NAME}_api
+    environment:
+      - PORT=${PORT}
+      - NODE_ENV=${NODE_ENV}
+      - EMAIL=${EMAIL}
+      - BASE_URL=${BASE_URL}
+      - HOST_PROJECT_ROOT=${PWD}
+    ports:
+      - "5000:${PORT}"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./temp:/app/temp
+    networks:
+      - default
+    restart: unless-stopped
+
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:${PORT}/"]
+      interval: 30s # Check every 15 seconds (more frequent)
+      timeout: 15s # 10 second timeout
+      retries: 3 # 3 retries before marking unhealthy
+      start_period: 30s # Wait 30 seconds before starting health checks
+
+    # Add logging configuration
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    # Add labels for better container management
+    labels:
+      - "app.name=${PACKAGE_NAME}"
+      - "app.version=${PACKAGE_VERSION}"
+      - "deployment.type=zero-downtime"
+
+  nginx:
+    profiles:
+      - prod
+    image: nginx:alpine
+    container_name: ${PACKAGE_NAME}_nginx
+    depends_on:
+      - app
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./nginx/certbot/www:/var/www/certbot
+      - ./nginx/certbot/conf:/etc/letsencrypt
+      - ./nginx/selfsigned:/etc/nginx/selfsigned
+
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - default
+    restart: always
+
+  certbot:
+    profiles:
+      - prod
+    image: certbot/certbot
+    container_name: ${PACKAGE_NAME}_certbot
+    volumes:
+      - ./nginx/certbot/www:/var/www/certbot
+      - ./nginx/certbot/conf:/etc/letsencrypt
+    environment:
+      - EMAIL=${EMAIL}
+      - BASE_URL=${BASE_URL}
+    entrypoint: >
+      certbot certonly --webroot --webroot-path=/var/www/certbot 
+      --email ${EMAIL} --agree-tos --no-eff-email 
+      -d ${BASE_URL}
+    depends_on:
+      - nginx
+    networks:
+      - default
+    restart: "no"
+
+  certbot-renew:
+    profiles:
+      - prod
+    image: certbot/certbot
+    container_name: ${PACKAGE_NAME}_certbot_renew
+    volumes:
+      - ./nginx/certbot/www:/var/www/certbot
+      - ./nginx/certbot/conf:/etc/letsencrypt
+    entrypoint: >
+      sh -c "trap exit TERM; 
+             while :; do 
+               echo '🔄 Checking for SSL renewal...'; 
+               certbot renew --webroot --webroot-path=/var/www/certbot --quiet --deploy-hook 'nginx -s reload'; 
+               sleep 12h; 
+             done"
+    depends_on:
+      - nginx
+    networks:
+      - default
+    restart: unless-stopped
+
+    # ====================== language image  ====================== #
   nodejs-image:
-    profile:
+    profiles:
       - prod
     build:
       context: .
@@ -8,7 +114,7 @@ services:
     image: executor-nodejs:latest
 
   deno-image:
-    profile:
+    profiles:
       - prod
     build:
       context: .
@@ -16,7 +122,7 @@ services:
     image: executor-deno:latest
 
   python-image:
-    profile:
+    profiles:
       - prod
     build:
       context: .
@@ -24,7 +130,7 @@ services:
     image: executor-python:latest
 
   java-image:
-    profile:
+    profiles:
       - prod
     build:
       context: .
@@ -32,48 +138,15 @@ services:
     image: executor-java:latest
 
   kotlin-image:
-    profile:
+    profiles:
       - prod
     build:
       context: .
       dockerfile: docker/Dockerfile.kotlin
     image: executor-kotlin:latest
 
-  nodejs-server-image:
-    profile:
-      - prod
-      - dev
-    build:
-      context: .
-      dockerfile: Dockerfile
-    image: nodejs-server-image:latest
-    environment:
-      - PORT=9091
-      - HOST_PROJECT_ROOT=${PWD}
-    ports:
-      - "9091:9091"
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - ./temp:/app/temp
-    networks:
-      - app-network
-    restart: unless-stopped
-
-  executeme-nginx:
-    profile:
-      - prod
-    image: nginx:alpine
-    ports:
-      - "9292:9292"
-    volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./nginx/certs:/etc/nginx/certs:ro
-    depends_on:
-      - nodejs-server-image
-    networks:
-      - app-network
-    restart: unless-stopped
-
 networks:
-  app-network:
-    driver: bridge
+  default:
+    name: ${PACKAGE_NAME}_network
+    labels:
+      - "project=${PACKAGE_NAME}"
