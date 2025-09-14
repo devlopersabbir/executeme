@@ -66,7 +66,7 @@ jobs:
       - name: Push Docker Image 🚀
         run: |
           echo "Pushing Docker image: $IMAGE_TAG"
-          docker compose --profile prod push
+          docker compose --profile prod:push push
           if [ $? -eq 0 ]; then
             echo "✅ Docker image $IMAGE_TAG pushed successfully!"
           else
