@@ -1,6 +1,7 @@
 services:
   app:
     profiles:
+      - prod:push
       - prod
       - dev
     build:
